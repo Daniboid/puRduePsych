@@ -10,7 +10,7 @@
 #'
 #' @returns Outputs the test for significance to the console and returns both a *z*-value and *p*-value for the test.
 #'
-#'
+#' @export z_independent_cors_test
 
 z_independent_cors_test = function(r1=NULL,
                                  r2=NULL,

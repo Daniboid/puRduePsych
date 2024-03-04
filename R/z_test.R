@@ -6,6 +6,8 @@
 #'
 #' @returns returns a list containing the `z_val` initially provided and the corresponding `p_val` (i.e., the probability of obtaining the specified value, or one more extreme, assuming the null hypothesis is true). The function also prints out the results of the test.
 #'
+#'
+#' @export z_test
 
 z_test = function(z_val = NULL,
                   alpha=.05,

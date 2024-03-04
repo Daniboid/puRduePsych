@@ -5,6 +5,8 @@
 #' @description
 #' Load the class data to the environment for use.
 #'
+#'
+#' @export load_class_data()
 
 load_class_data = function(){
   load("./R/ClassData.RData")

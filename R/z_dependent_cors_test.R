@@ -12,6 +12,8 @@
 #' @param two_tailed Logical. If `True` (default) the test for significance is done in a two-tailed manner.
 #'
 #' @returns Outputs the test for significance to the console and returns both a *z*-value and *p*-value for the test.
+#'
+#' @export z_dependent_cors_test
 
 z_dependent_cors_test = function(r_x1_y=NULL,
                                  r_x2_y=NULL,

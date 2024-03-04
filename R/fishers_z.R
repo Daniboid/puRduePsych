@@ -10,6 +10,7 @@
 #'
 #' @returns If `n` is not provided, the function will only return the calculated *z*-score. If `n` is provided, a list will be returned: the first item will be the *z*-score, the second item will be the lower-bound of the confidence interval computed, the third will be the corresponding upper-bound. An optional 4th value is the standard error.
 #'
+#' @export fishers_z
 
 fishers_z = function(r,
                      n = NULL,

@@ -14,7 +14,7 @@
 #'
 #' @returns A data.frame with the corresponding summary values.
 #'
-#'
+#' @export lm_summarize
 
 lm_summarize = function(lm,
                         std = T,

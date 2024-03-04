@@ -10,6 +10,8 @@
 #' @param std Logical. If `True` (default) the function will output rows for both the unstandardized and standardized mediation effects.
 #'
 #' @returns Returns a `data.frame` with the mediation effect and test of significance.
+#'
+#' @export lm_mediation
 
 lm_mediation = function(mediator,
                         y_xm_reg,

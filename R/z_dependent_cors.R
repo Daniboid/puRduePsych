@@ -6,6 +6,8 @@
 #' @param n Numeric. The sample size used to calculate the correlations.
 #'
 #' @returns Returns a z-score that can be tested using the `z_dependent_cors_test()` or `z_test()` function.
+#'
+#' @export z_dependent_cors
 
 z_dependent_cors = function(r_x1_y,
                             r_x2_y,

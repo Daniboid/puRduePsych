@@ -6,6 +6,8 @@
 #' @param n2 Numeric. The sample size from which `r2` was generated. Must be a positive value.
 #'
 #' @returns `z_independent_cors()` returns a z-score that can be tested using the `z_independent_cors_test()` or `z_test()` function.
+#'
+#' @export z_independent_cors
 
 z_independent_cors = function(r1,
                               r2,
