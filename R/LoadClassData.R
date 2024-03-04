@@ -7,7 +7,7 @@
 #'
 
 load_class_data = function(){
-  load("./data/ClassData.RData")
+  load("./R/ClassData.RData")
 }
 
 # # Dani Larranaga - 1/19/2024
