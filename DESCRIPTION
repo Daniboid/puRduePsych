@@ -1,13 +1,13 @@
 Package: puRduePsych
-Title: Functions to be used in the Department of Psychological Science's required statistics courses: ANOVA, and Multiple regression. Additional functionality will be added as needed.
+Title: Functions to be used in the Department of Psychological Science's required statistics courses: ANOVA, and Multiple regression. Additional functionality will be added as needed
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Dani Larranaga",
            family = "McGough",
            role = c("aut", "cre"),
            email = "dlarran@purdue.edu")  
-Description: Mostly Linear regression stuffs...
-License: MIT
+Description: Mostly Linear regression stuffs. Still writing this package and updaes will be frequent.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
