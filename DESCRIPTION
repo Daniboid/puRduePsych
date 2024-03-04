@@ -1,12 +1,12 @@
-Package: danisRregression
-Title: Regression Functions with Rmd integration for Don Lynam's course
+Package: puRdue_psych
+Title: Functions to be used in the Department of Psychological Science's required statistics courses: ANOVA, and Multiple regression. Additional functionality will be added as needed.
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Dani",
            family = "Larranaga",
            role = c("aut", "cre"),
            email = "dlarran@purdue.edu",
-           comment = c(ORCID = "https://orcid.org/0000-0002-2988-5565"))
+           comment = c(ORCID = "https://orcid.org/0000-0002-2988-5565", personal = "http://danielmcgough.com/")
 Description: Mostly Linear regression stuffs...
 License: Open Source, yo! DO with it what you want!
 Encoding: UTF-8
