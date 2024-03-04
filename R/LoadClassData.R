@@ -1,13 +1,14 @@
 #'
 #' Load the Class Data for Examples
 #'
-#' @name LoadClassData
 #'
 #' @description
 #' Load the class data to the environment for use.
 #'
 
-load("./data/ClassData.RData")
+load_class_data = function(){
+  load("./data/ClassData.RData")
+}
 
 # # Dani Larranaga - 1/19/2024
 # #
