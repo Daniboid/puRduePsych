@@ -7,7 +7,7 @@
 #' Load the class data to the environment for use.
 #'
 
-load("./ClassData.RData")
+load("./data/ClassData.RData")
 
 # # Dani Larranaga - 1/19/2024
 # #
