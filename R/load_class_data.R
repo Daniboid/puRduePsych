@@ -9,5 +9,5 @@
 #' @export load_class_data
 
 load_class_data = function(){
-  load("./R/ClassData.RData")
+  load("./data/ClassData.RData")
 }
