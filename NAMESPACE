@@ -3,7 +3,6 @@
 export(fishers_z)
 export(lm_mediation)
 export(lm_summarize)
-export(load_class_data)
 export(omega_sq)
 export(z_dependent_cors)
 export(z_dependent_cors_test)
