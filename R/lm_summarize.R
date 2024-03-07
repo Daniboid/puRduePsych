@@ -96,8 +96,7 @@ lm_summarize = function(lm,
               "\n\n",   sep = "")
         )
 
-    print(lm_coef)
-    cat("\n\n")
+    # print(lm_coef)
   }
 
   if (correlations) {
