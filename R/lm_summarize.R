@@ -31,13 +31,14 @@ lm_summarize = function(lm,
 
   dv = as.character(lm$call$formula)[2]
 
-
   summ_lm = summary(lm)
 
   lm_coef = data.frame(summ_lm$coefficients)
   names(lm_coef) = c("B", "S.E.", "t", "p.val")
 
-  cors = stats::cor(lm$model)
+  for_cors = data.frame(lapply(lm$model, function(x) { x = as.numeric(x); return(x) }))
+
+  cors = stats::cor(for_cors)
 
 
   if(std) {
