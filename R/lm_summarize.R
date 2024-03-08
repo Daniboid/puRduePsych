@@ -42,7 +42,7 @@ lm_summarize = function(lm,
 
 
   if(std) {
-    lm_stdzd = summary(lm(lm$call$formula, data.frame(scale(lm$model))))
+    lm_stdzd = summary(lm(lm$call$formula, data.frame(scale(for_cors))))
     lm_coef$Beta = data.frame(lm_stdzd$coefficients)$Estimate
     lm_coef$Beta[1] = NA
     lm_coef = lm_coef[,c("B", "S.E.", "Beta", "t", "p.val")]
