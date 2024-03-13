@@ -29,7 +29,7 @@ lm_summarize = function(lm,
 
   if(!is.numeric(CL) | CL > 1 | CL <= 0) stop("Confidence Level (CL) needs to be a numeric value between 0 and 1.")
 
-  dv = as.character(lm$call$formula)[2]
+  dv = as.character(lm$terms)[2]
 
   summ_lm = summary(lm)
 
@@ -72,7 +72,7 @@ lm_summarize = function(lm,
 
   if(CI){
     df = nrow(lm$model) - ncol(lm$model)
-    t_crit = stats::qt(CL, df)
+    t_crit = stats::qt(1-((1-CL)/2), df)
 
     lm_coef$CI.LB = lm_coef$B - (t_crit * lm_coef$S.E)
     lm_coef$CI.UB = lm_coef$B + (t_crit * lm_coef$S.E.)
