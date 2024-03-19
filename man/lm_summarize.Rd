@@ -12,7 +12,8 @@ lm_summarize(
   CI = F,
   CL = 0.95,
   verbose = F,
-  correlations = F
+  correlations = F,
+  warn = T
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ lm_summarize(
 \item{verbose}{Logical. If `True` the R^2 for the model and test of significance will be output to the console while the function runs. This will not be saved, as it is already part of the `lm` object and cam be accessed from there. Defaults to `False`.}
 
 \item{correlations}{Logical. If `True` the zero-order correlation matrix will be output to the console while the function is running. Defaults to `False`.}
+
+\item{warn}{Logical. If `True` (default) warnings are displayed.}
 }
 \value{
 A data.frame with the corresponding summary values.

@@ -11,6 +11,7 @@
 #' @param CL Numeric. The confidence level of the confidence intervals to be returned. The value must be between 0 and 1. Defaults to .95, corresponding to a 95\% confidence level.
 #' @param verbose Logical. If `True` the R^2 for the model and test of significance will be output to the console while the function runs. This will not be saved, as it is already part of the `lm` object and cam be accessed from there. Defaults to `False`.
 #' @param correlations Logical. If `True` the zero-order correlation matrix will be output to the console while the function is running. Defaults to `False`.
+#' @param warn Logical. If `True` (default) warnings are displayed.
 #'
 #' @returns A data.frame with the corresponding summary values.
 #'
@@ -23,13 +24,18 @@ lm_summarize = function(lm,
                         CI = F,
                         CL = .95,
                         verbose = F,
-                        correlations = F) { #= NULL){
+                        correlations = F,
+                        warn = T) { #= NULL){
   # if( (!is.null(lm) & ( !is.null(data) | !is.null(formula) )) |
   #     (is.null(data) & !is.null(formula)) | (!is.null(data) & is.null(formula)) ) stop("You must either provide an lm object or data and a formula.")
 
   if(!is.numeric(CL) | CL > 1 | CL <= 0) stop("Confidence Level (CL) needs to be a numeric value between 0 and 1.")
 
+  # print(lm$call)
+
   dv = as.character(lm$terms)[2]
+  x_term = as.character(lm$terms)[3]
+  ivs = unlist(strsplit(x_term, " \\+ "))
 
   summ_lm = summary(lm)
 
@@ -39,36 +45,48 @@ lm_summarize = function(lm,
   for_cors = data.frame(lapply(lm$model, function(x) { x = as.numeric(x); return(x) }))
 
   cors = stats::cor(for_cors)
-
-
   if(std) {
-    lm_stdzd = summary(lm(lm$call$formula, data.frame(scale(for_cors))))
+    lm_stdzd = summary(lm(eval(parse(text=paste(dv, "~", x_term, collapse =" + "))),
+                       data.frame(lapply(lm$model, FUN = function(x) {
+                         if(is.numeric(x)) scale(x)
+                         if(is.factor(x)) scale(as.numeric(x))
+                         return(x)})
+                       )))
     lm_coef$Beta = data.frame(lm_stdzd$coefficients)$Estimate
     lm_coef$Beta[1] = NA
     lm_coef = lm_coef[,c("B", "S.E.", "Beta", "t", "p.val")]
   }
 
-  if(semi & nrow(lm_coef) > 2) {
+  if(semi & length(ivs) > 2) {
     lm_coef$semi = NA_real_
-    for(x in 2:nrow(lm_coef)) {
-      lm_coef$semi[x] = sqrt(summ_lm$r.squared -
-                               summary(stats::lm(stats::as.formula(paste(dv, "~ .")), data = lm$model[,-x]))$r.squared)
-      if(lm_coef$B[x] < 0 ) lm_coef$semi[x] = -1*lm_coef$semi[x]
+
+    for(x in ivs) {
+      # cat(paste(x, "\n"))
+      lm_coef$semi[startsWith(rownames(lm_coef), x)][1] =
+        sqrt(summ_lm$r.squared -
+               summary(stats::lm(eval(parse(text=paste(dv, "~", paste0(ivs[ivs != x], collapse = " + ")))),
+                                 data = lm$model))$r.squared)
     }
-  } else if(semi) warning("Semi-partial correlations can only be obtained if more than one predictor is in the model. \n\t Semi-partial correlations were not computed...")
+
+    for(x in 2:nrow(lm_coef)) if(lm_coef$B[x] < 0 ) lm_coef$semi[x] = -1*lm_coef$semi[x]
+  } else if(semi & warn) warning("Semi-partial correlations can only be obtained if more than one predictor is in the model. \n\t Semi-partial correlations were not computed...")
 
 
-
-  if(partial & nrow(lm_coef) > 2) {
+  if(partial & length(ivs) > 2) {
     lm_coef$partial = NA_real_
-    for(x in 2:nrow(lm_coef)) {
-      lm_coef$partial[x] = sqrt((summ_lm$r.squared -
-                                   summary(stats::lm(stats::as.formula(paste(dv, "~ .")), data = lm$model[,-x]))$r.squared)/
-                                  (1-summary(stats::lm(stats::as.formula(paste(dv, "~ .")), data = lm$model[,-x]))$r.squared)
+    for(x in ivs) {
+      lm_coef$partial[startsWith(rownames(lm_coef),x)][1] =
+        sqrt((summ_lm$r.squared -
+                summary(stats::lm(stats::as.formula(sprintf(paste(dv, "~", paste0(ivs[ivs != x], collapse = " + ")))),
+                                  data = lm$model))$r.squared)/
+               (1-summary(stats::lm(stats::as.formula(sprintf(paste(dv, "~", paste0(ivs[ivs != x], collapse = " + ")))),
+                                    data = lm$model))$r.squared)
                                 )
-      if(lm_coef$B[x] < 0 ) lm_coef$partial[x] = -1*lm_coef$partial[x]
     }
-  } else if(partial) warning("Partial correlations can only be obtained if more than one predictor is in the model. \n\t Partial correlations were not computed...")
+
+
+    for(x in 2:nrow(lm_coef)) if(lm_coef$B[x] < 0 ) lm_coef$partial[x] = -1*lm_coef$partial[x]
+  } else if(partial & warn) warning("Partial correlations can only be obtained if more than one predictor is in the model. \n\t Partial correlations were not computed...")
 
   if(CI){
     df = nrow(lm$model) - ncol(lm$model)
