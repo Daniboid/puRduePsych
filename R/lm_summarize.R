@@ -47,9 +47,15 @@ lm_summarize = function(lm,
   cors = stats::cor(for_cors)
   if(std) {
     lm_stdzd = summary(lm(eval(parse(text=paste(dv, "~", x_term, collapse =" + "))),
-                       data.frame(lapply(lm$model, FUN = function(x) {x = scale(as.numeric(x)); return(x)}) )))
-    lm_coef$Beta = data.frame(lm_stdzd$coefficients)$Estimate
+                       data.frame(lapply(lm$model, FUN = function(x) {
+                         if(is.numeric(x)) x = scale(x)
+                         if(is.factor(x))  x = scale(as.numeric(x))
+                         return(x)}) )))
     lm_coef$Beta[1] = NA
+    for(x in ivs) {
+      lm_coef$Beta[startsWith(rownames(lm_coef),x)][1] =
+        data.frame(lm_stdzd$coefficients)$Estimate[rownames(lm_stdzd$coefficients) == x]
+    }
     lm_coef = lm_coef[,c("B", "S.E.", "Beta", "t", "p.val")]
   }
 

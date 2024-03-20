@@ -122,7 +122,6 @@ hierarchical_reg = function(y,
     )
 
     #tmp_reg$model = mod$model
-
     tmp_summ = lm_summarize(tmp_reg, warn=F)
     if(verbose) print(tmp_summ)
     coefs_output[[s]] = tmp_summ
