@@ -88,7 +88,7 @@ hierarchical_reg = function(y,
     mod_sig = stats::pf(mod_F, mod_df1, mod_df2, lower.tail = F)
     R_sq_change = R_sq - prev_R_sq
     prev_R_sq = R_sq
-    change_df1 = length(chunks[s])
+    change_df1 = length(chunks[[s]])
     change_F = (R_sq_change/(change_df1)) / ((1-R_sq)/mod_df2)
     change_sig = stats::pf(change_F, change_df1, mod_df2, lower.tail = F)
 
