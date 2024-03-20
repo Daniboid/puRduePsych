@@ -6,10 +6,12 @@
 #' For example, one version of the argument could be `chunks = list(step1=c("pred1", "pred2"), step2=c("pred3"))`. If step names are not specified, the chunks will be numbered in the order that they are entered into the model.
 #' If `chunks` are not specified, the individual predictors will be treated as the items to be included at each step.
 #' @param data Data.frame. The data from which the model(s) should be calculated. This argument is necessary if `y` is a character string.
-#' @param stepwise Logical. If False (default), the `chunks` will be entered into the model in the order that they are listed. If True, the `chunks` will be entered into the model based on the amount of variance they explain.
+#' @param stepwise Logical. If `False` (default), the `chunks` will be entered into the model in the order that they are listed. If True, the `chunks` will be entered into the model based on the amount of variance they explain.
+#' @param simultaneous Logical. If `True` (default) the value of the chunks will be evaluated in a (pseudo) simultaneous manner. The list of data.frames detailing the individual variables' descriptions will only be fore the overall regression.
+#' Additionally, the summary of the steps will detail the semi-partial $R^2$ for each `chunk`, rather than the $\Delta R^2$ at each step.
 #' @param verbose Logical. If `True` the coefficients of the model will be output to the console for each chunk bring processed while the function runs. This will not be saved, as it is already part of the `lm` object and cam be accessed from there. Defaults to `False`.
 #' @param steps_verbose Logical. If `True` the order that the chunks were entered into the model will be output to the console while the function tries to identify the optimal order. If `NULL` (default) this will will take the value of `verbose`.
-#' @param step_iters Numeric. Only used if `stepwise == True`. The number of iterations of step-wise comparisons to do before ending the procedure comparing variances explained. Defaults to 50.
+#' @param step_iters Numeric. Only used if `stepwise` is `True`. The number of iterations of step-wise comparisons to do before ending the procedure comparing variances explained. Defaults to 50.
 #'
 #' @returns A list of data.frames. The first is the information about the different steps/chunks and their R-squared Changes. The second is the list of coefficient summaries at each step.
 #'
@@ -21,14 +23,18 @@ hierarchical_reg = function(y,
                             chunks = NULL,
                             data = NULL,
                             stepwise = F,
+                            simultaneous = F,
                             verbose = F,
                             steps_verbose = NULL,
                             step_iters = 50) {
   # Check for things that will cause errors
   if(!is.null(chunks) & typeof(chunks) != "list") stop("`chunks` must be a list of vectors containing variable names.")
   if(!is.null(chunks) & length(chunks) <= 1) stop("`chunks` must contain more than 1 vector of variable names.")
+  if(stepwise & simultaneous) stop("You cannot (really, just shouldn't) do simultaneous and hierarchical regressions at the same time...")
 
   if(typeof(y) == "character"){
+    warning("Implementation of 'y' as an outcome variable has not been fully tested. Please, let Dani know if you encounter any errors.",
+            immediate. = T)
     if(is.null(data)) stop("Data is required when y is specifying an outcome variable.")
     if(!y %in% colnames(data)) stop("The outcome varaible is not in the data set.")
 
@@ -150,7 +156,23 @@ hierarchical_reg = function(y,
     }
   }
 
+  # For Simultaneous
+
+  if (simultaneous){
+    warning("Simultaneous hierarchical regression is not yet tested", immediate. = T)
+    steps_output = data.frame(
+      step      = steps_output$step[nrow(steps_output)],
+      R_sq_semi = steps_output$R_sq_change[nrow(steps_output)],
+      F_semi    = steps_output$change_F[nrow(steps_output)],
+      df1_semi  = step_output$change_df1[nrow(steps_output)],
+      df2_semi  = step_output$mod_df2[nrow(steps_output)],
+      sig       = step_output$change_sig[nrow(steps_output)]
+    )
+    for(c in 1:length(chunks)){
+      print(list(unlist(chunks[[-c]]), chunks(c)))
+    }
+  }
 
   rownames(step_output) = 1:nrow(step_output)
-  return(list(step_output, coefs_output))
+  return(list(steps=step_output, coefs=coefs_output))
 }
