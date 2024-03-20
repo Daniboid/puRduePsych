@@ -160,13 +160,13 @@ hierarchical_reg = function(y,
 
   if (simultaneous){
     warning("Simultaneous hierarchical regression is not yet tested", immediate. = T)
-    steps_output = data.frame(
-      step      = steps_output$step[nrow(steps_output)],
-      R_sq_semi = steps_output$R_sq_change[nrow(steps_output)],
-      F_semi    = steps_output$change_F[nrow(steps_output)],
-      df1_semi  = step_output$change_df1[nrow(steps_output)],
-      df2_semi  = step_output$mod_df2[nrow(steps_output)],
-      sig       = step_output$change_sig[nrow(steps_output)]
+    step_output = data.frame(
+      step      = step_output$step[nrow(step_output)],
+      R_sq_semi = step_output$R_sq_change[nrow(step_output)],
+      F_semi    = step_output$change_F[nrow(step_output)],
+      df1_semi  = step_output$change_df1[nrow(step_output)],
+      df2_semi  = step_output$mod_df2[nrow(step_output)],
+      sig       = step_output$change_sig[nrow(step_output)]
     )
     for(c in 1:length(chunks)){
       print(list(unlist(chunks[[-c]]), chunks(c)))
