@@ -1,6 +1,6 @@
 Package: puRduePsych
 Title: Functions to be used in the Department of Psychological Science's required statistics courses: ANOVA, and Multiple regression. Additional functionality will be added as needed
-Version: 0.0.240312
+Version: 0.0.240319
 Authors@R: 
     person(given = "Dani Larranaga",
            family = "McGough",

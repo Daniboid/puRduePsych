@@ -9,9 +9,11 @@ hierarchical_reg(
   chunks = NULL,
   data = NULL,
   stepwise = F,
+  simultaneous = F,
   verbose = F,
   steps_verbose = NULL,
-  step_iters = 50
+  step_iters = 50,
+  simult_verbose = NULL
 )
 }
 \arguments{
@@ -24,13 +26,18 @@ If `chunks` are not specified, the individual predictors will be treated as the 
 
 \item{data}{Data.frame. The data from which the model(s) should be calculated. This argument is necessary if `y` is a character string.}
 
-\item{stepwise}{Logical. If False (default), the `chunks` will be entered into the model in the order that they are listed. If True, the `chunks` will be entered into the model based on the amount of variance they explain.}
+\item{stepwise}{Logical. If `False` (default), the `chunks` will be entered into the model in the order that they are listed. If True, the `chunks` will be entered into the model based on the amount of variance they explain.}
+
+\item{simultaneous}{Logical. If `True` (default) the value of the chunks will be evaluated in a (pseudo) simultaneous manner. The list of data.frames detailing the individual variables' descriptions will only be fore the overall regression.
+Additionally, the summary of the steps will detail the semi-partial $R^2$ for each `chunk`, rather than the $\\Delta R^2$ at each step.}
 
 \item{verbose}{Logical. If `True` the coefficients of the model will be output to the console for each chunk bring processed while the function runs. This will not be saved, as it is already part of the `lm` object and cam be accessed from there. Defaults to `False`.}
 
 \item{steps_verbose}{Logical. If `True` the order that the chunks were entered into the model will be output to the console while the function tries to identify the optimal order. If `NULL` (default) this will will take the value of `verbose`.}
 
-\item{step_iters}{Numeric. Only used if `stepwise == True`. The number of iterations of step-wise comparisons to do before ending the procedure comparing variances explained. Defaults to 50.}
+\item{step_iters}{Numeric. Only used if `stepwise` is `True`. The number of iterations of step-wise comparisons to do before ending the procedure comparing variances explained. Defaults to 50.}
+
+\item{simult_verbose}{Logical. If `True` the function will output which chunk's semipartial is being calculated to the console while running. If `NULL` (default) this will will take the value of `verbose`.}
 }
 \value{
 A list of data.frames. The first is the information about the different steps/chunks and their R-squared Changes. The second is the list of coefficient summaries at each step.

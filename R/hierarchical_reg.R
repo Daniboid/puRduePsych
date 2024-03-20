@@ -8,7 +8,7 @@
 #' @param data Data.frame. The data from which the model(s) should be calculated. This argument is necessary if `y` is a character string.
 #' @param stepwise Logical. If `False` (default), the `chunks` will be entered into the model in the order that they are listed. If True, the `chunks` will be entered into the model based on the amount of variance they explain.
 #' @param simultaneous Logical. If `True` (default) the value of the chunks will be evaluated in a (pseudo) simultaneous manner. The list of data.frames detailing the individual variables' descriptions will only be fore the overall regression.
-#' Additionally, the summary of the steps will detail the semi-partial $R^2$ for each `chunk`, rather than the $\Delta R^2$ at each step.
+#' Additionally, the summary of the steps will detail the semi-partial $R^2$ for each `chunk`, rather than the $\\Delta R^2$ at each step.
 #' @param verbose Logical. If `True` the coefficients of the model will be output to the console for each chunk bring processed while the function runs. This will not be saved, as it is already part of the `lm` object and cam be accessed from there. Defaults to `False`.
 #' @param steps_verbose Logical. If `True` the order that the chunks were entered into the model will be output to the console while the function tries to identify the optimal order. If `NULL` (default) this will will take the value of `verbose`.
 #' @param step_iters Numeric. Only used if `stepwise` is `True`. The number of iterations of step-wise comparisons to do before ending the procedure comparing variances explained. Defaults to 50.
