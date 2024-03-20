@@ -12,6 +12,7 @@
 #' @param verbose Logical. If `True` the coefficients of the model will be output to the console for each chunk bring processed while the function runs. This will not be saved, as it is already part of the `lm` object and cam be accessed from there. Defaults to `False`.
 #' @param steps_verbose Logical. If `True` the order that the chunks were entered into the model will be output to the console while the function tries to identify the optimal order. If `NULL` (default) this will will take the value of `verbose`.
 #' @param step_iters Numeric. Only used if `stepwise` is `True`. The number of iterations of step-wise comparisons to do before ending the procedure comparing variances explained. Defaults to 50.
+#' @param simult_verbose Logical. If `True` the function will output which chunk's semipartial is being calculated to the console while running. If `NULL` (default) this will will take the value of `verbose`.
 #'
 #' @returns A list of data.frames. The first is the information about the different steps/chunks and their R-squared Changes. The second is the list of coefficient summaries at each step.
 #'
@@ -26,7 +27,8 @@ hierarchical_reg = function(y,
                             simultaneous = F,
                             verbose = F,
                             steps_verbose = NULL,
-                            step_iters = 50) {
+                            step_iters = 50,
+                            simult_verbose = NULL) {
   # Check for things that will cause errors
   if(!is.null(chunks) & typeof(chunks) != "list") stop("`chunks` must be a list of vectors containing variable names.")
   if(!is.null(chunks) & length(chunks) <= 1) stop("`chunks` must contain more than 1 vector of variable names.")
@@ -56,6 +58,7 @@ hierarchical_reg = function(y,
   if(is.null(names(chunks))) names(chunks) = rep("", length(chunks))
 
   if(is.null(steps_verbose)) steps_verbose = verbose
+  if(is.null(simult_verbose)) simult_verbose = verbose
 
   # Get the output...
   step_output = data.frame(
@@ -161,18 +164,32 @@ hierarchical_reg = function(y,
   if (simultaneous){
     warning("Simultaneous hierarchical regression is not yet tested", immediate. = T)
     step_output = data.frame(
-      step      = step_output$step[nrow(step_output)],
-      R_sq_semi = step_output$R_sq_change[nrow(step_output)],
-      F_semi    = step_output$change_F[nrow(step_output)],
-      df1_semi  = step_output$change_df1[nrow(step_output)],
-      df2_semi  = step_output$mod_df2[nrow(step_output)],
-      sig       = step_output$change_sig[nrow(step_output)]
+      step      = c(),
+      R_sq_semi = c(),
+      F_semi    = c(),
+      df1_semi  = c(),
+      df2_semi  = c(),
+      sig       = c()
     )
     for(c in 1:length(chunks)){
-      print(list(unlist(chunks[[-c]]), chunks(c)))
+      if(simult_verbose) cat(paste0("Evaluating semipartial for the set: ",
+                                    names(chunks)[c]), "\n\n") # list(budy_chunk=unlist(unname(chunks[-c])), chunks[c]))
+      tmp_chunks = list(budy_chunk=unlist(unname(chunks[-c])), chunks[c])
+
+      step_output = rbind(step_output,
+                      data.frame(
+                        step      = step_output$step[nrow(step_output)],
+                        R_sq_semi = step_output$R_sq_change[nrow(step_output)],
+                        F_semi    = step_output$change_F[nrow(step_output)],
+                        df1_semi  = step_output$change_df1[nrow(step_output)],
+                        df2_semi  = step_output$mod_df2[nrow(step_output)],
+                        sig       = step_output$change_sig[nrow(step_output)]
+      ))
     }
+
+    coefs_output = coefs_output[length(coefs_output)]
   }
 
-  rownames(step_output) = 1:nrow(step_output)
+  # rownames(step_output) = 1:nrow(step_output)
   return(list(steps=step_output, coefs=coefs_output))
 }
