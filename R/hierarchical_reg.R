@@ -162,7 +162,7 @@ hierarchical_reg = function(y,
   # For Simultaneous
 
   if (simultaneous){
-    warning("Simultaneous hierarchical regression is not yet tested", immediate. = T)
+    warning("Simultaneous hierarchical regression is not yet tested", immediate. = T, call. = F)
     step_output = data.frame(
       step      = c(),
       R_sq_semi = c(),
@@ -175,21 +175,22 @@ hierarchical_reg = function(y,
       if(simult_verbose) cat(paste0("Evaluating semipartial for the set: ",
                                     names(chunks)[c]), "\n\n") # list(budy_chunk=unlist(unname(chunks[-c])), chunks[c]))
       tmp_chunks = list(budy_chunk=unlist(unname(chunks[-c])), chunks[c])
+      tmp_highr  = hierarchical_reg(mod, tmp_chunks)$steps
 
       step_output = rbind(step_output,
                       data.frame(
-                        step      = step_output$step[nrow(step_output)],
-                        R_sq_semi = step_output$R_sq_change[nrow(step_output)],
-                        F_semi    = step_output$change_F[nrow(step_output)],
-                        df1_semi  = step_output$change_df1[nrow(step_output)],
-                        df2_semi  = step_output$mod_df2[nrow(step_output)],
-                        sig       = step_output$change_sig[nrow(step_output)]
+                        step      = names(chunks)[c],
+                        R_sq_semi = tmp_highr$R_sq_change[2],
+                        F_semi    = tmp_highr$change_F[2],
+                        df1_semi  = tmp_highr$change_df1[2],
+                        df2_semi  = tmp_highr$mod_df2[2],
+                        sig       = tmp_highr$change_sig[2]
       ))
     }
 
     coefs_output = coefs_output[length(coefs_output)]
   }
 
-  # rownames(step_output) = 1:nrow(step_output)
+  if(nrow(step_output>=1)) rownames(step_output) = 1:nrow(step_output)
   return(list(steps=step_output, coefs=coefs_output))
 }
