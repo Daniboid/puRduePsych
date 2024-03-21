@@ -11,7 +11,6 @@
 #' Additionally, the summary of the steps will detail the semi-partial $R^2$ for each `chunk`, rather than the $\\Delta R^2$ at each step.
 #' @param verbose Logical. If `True` the coefficients of the model will be output to the console for each chunk bring processed while the function runs. This will not be saved, as it is already part of the `lm` object and cam be accessed from there. Defaults to `False`.
 #' @param steps_verbose Logical. If `True` the order that the chunks were entered into the model will be output to the console while the function tries to identify the optimal order. If `NULL` (default) this will will take the value of `verbose`.
-#' @param step_iters Numeric. Only used if `stepwise` is `True`. The number of iterations of step-wise comparisons to do before ending the procedure comparing variances explained. Defaults to 50.
 #' @param simult_verbose Logical. If `True` the function will output which chunk's semipartial is being calculated to the console while running. If `NULL` (default) this will will take the value of `verbose`.
 #'
 #' @returns A list of data.frames. The first is the information about the different steps/chunks and their R-squared Changes. The second is the list of coefficient summaries at each step.
@@ -27,12 +26,11 @@ hierarchical_reg = function(y,
                             simultaneous = F,
                             verbose = F,
                             steps_verbose = NULL,
-                            step_iters = 50,
                             simult_verbose = NULL) {
   # Check for things that will cause errors
   if(!is.null(chunks) & typeof(chunks) != "list") stop("`chunks` must be a list of vectors containing variable names.")
   if(!is.null(chunks) & length(chunks) <= 1) stop("`chunks` must contain more than 1 vector of variable names.")
-  if(stepwise & simultaneous) stop("You cannot (really, just shouldn't) do simultaneous and hierarchical regressions at the same time...")
+  if(stepwise & simultaneous) stop("You cannot (really, just shouldn't) do simultaneous and stepwise regressions at the same time... so this function doesn't allow it.")
 
   if(typeof(y) == "character"){
     warning("Implementation of 'y' as an outcome variable has not been fully tested. Please, let Dani know if you encounter any errors.",
@@ -59,6 +57,33 @@ hierarchical_reg = function(y,
 
   if(is.null(steps_verbose)) steps_verbose = verbose
   if(is.null(simult_verbose)) simult_verbose = verbose
+
+  ## For stepwise
+
+  if(stepwise){
+    # warning("Stepwise regression still being tested...", immediate. = T)
+    fin_chunks = list()
+
+    for(c in 1:(length(chunks)-1)){
+      if(steps_verbose) cat(paste0("Checking:\n\t",
+                                   paste(names(chunks)[!names(chunks) %in% names(fin_chunks)], collapse = ", "),
+                                   "\n"))
+      tmp_hier = hierarchical_reg(mod,
+                                  chunks = chunks[!names(chunks) %in% names(fin_chunks)],
+                                  simultaneous = T,
+                                  verbose = F)
+      fin_chunks = append(fin_chunks, chunks[names(chunks) == tmp_hier$steps$step[tmp_hier$steps$R_sq_semi == max(tmp_hier$steps$R_sq_semi)]])
+      if(steps_verbose) cat(paste0("\t", names(fin_chunks)[length(fin_chunks)],
+                                   " identified as the highest R^2 (", max(tmp_hier$steps$R_sq_semi), ") at this step.\n",
+                                   "\tCurrent chunk order: ", paste(names(fin_chunks), collapse = ", "),
+                                   "\n\n"))
+    }
+    chunks = append(fin_chunks, chunks[!names(chunks) %in% names(fin_chunks)])
+
+
+    if(steps_verbose) cat(paste0("Final Chunks order is:\t", paste(names(chunks), collapse = ", "),
+                                 "\n\n"))
+  }
 
   # Get the output...
   step_output = data.frame(
@@ -126,36 +151,6 @@ hierarchical_reg = function(y,
     if(verbose) print(tmp_summ)
     coefs_output[[s]] = tmp_summ
     names(coefs_output)[s] = step
-  }
-
-  ## For stepwise
-
-  if(stepwise){
-    old_chunks = chunks
-    new_chunks = chunks[order(step_output$R_sq_change, decreasing=T)]
-
-    iter_count=0
-
-    while(!identical(old_chunks, new_chunks)){
-      if (steps_verbose) cat(paste("Stepwise Old Chunk Order:", paste(names(old_chunks), collapse=", "),
-                                   "\n\t\t     New:", paste(names(new_chunks), collapse=", "), "\n\n"))
-
-      tmp_output = hierarchical_reg(mod, new_chunks, verbose = F, stepwise = F)
-      step_output = tmp_output[[1]]
-      coefs_output = tmp_output[[2]]
-      old_chunks = new_chunks
-      new_chunks = old_chunks[order(step_output$R_sq_change, decreasing=T)]
-
-      iter_count = iter_count+1
-      if(iter_count >= step_iters) {
-        old_chunks = new_chunks
-        warning(paste("The order of the stepwise components did not converge on a single order.",
-                      "\n\tMax iteration count (", step_iters, ")  reached.",
-                      "\n\tUse `steps_verbose=True` to see what steps were evaluated in what order, or",
-                      "\n\tincrease `step_iters` to increase the max iteration count.", sep = ""),
-                immediate. = T)
-      }
-    }
   }
 
   # For Simultaneous
