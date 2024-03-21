@@ -161,7 +161,7 @@ hierarchical_reg = function(y,
   # For Simultaneous
 
   if (simultaneous){
-    warning("Simultaneous hierarchical regression is not yet tested", immediate. = T, call. = F)
+    # warning("Simultaneous hierarchical regression is not  yet tested", immediate. = T, call. = F)
     step_output = data.frame(
       step      = c(),
       R_sq_semi = c(),
