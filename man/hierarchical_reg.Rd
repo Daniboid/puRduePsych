@@ -12,7 +12,6 @@ hierarchical_reg(
   simultaneous = F,
   verbose = F,
   steps_verbose = NULL,
-  step_iters = 50,
   simult_verbose = NULL
 )
 }
@@ -34,8 +33,6 @@ Additionally, the summary of the steps will detail the semi-partial $R^2$ for ea
 \item{verbose}{Logical. If `True` the coefficients of the model will be output to the console for each chunk bring processed while the function runs. This will not be saved, as it is already part of the `lm` object and cam be accessed from there. Defaults to `False`.}
 
 \item{steps_verbose}{Logical. If `True` the order that the chunks were entered into the model will be output to the console while the function tries to identify the optimal order. If `NULL` (default) this will will take the value of `verbose`.}
-
-\item{step_iters}{Numeric. Only used if `stepwise` is `True`. The number of iterations of step-wise comparisons to do before ending the procedure comparing variances explained. Defaults to 50.}
 
 \item{simult_verbose}{Logical. If `True` the function will output which chunk's semipartial is being calculated to the console while running. If `NULL` (default) this will will take the value of `verbose`.}
 }
