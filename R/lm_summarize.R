@@ -109,7 +109,7 @@ lm_summarize = function(lm,
 
 
   if (verbose) {
-    cat(paste("\n\nR-Squared: ", round(summ_lm$r.squared,4), "\t\tAdj. R-Squared: ", round(summ_lm$adj.r.squared,4),"\n\t",
+    cat(paste("\nR-Squared: ", round(summ_lm$r.squared,4), "\t\tAdj. R-Squared: ", round(summ_lm$adj.r.squared,4),"\n\t",
               "F (", summ_lm$fstatistic[2], ", ", summ_lm$fstatistic[3], ") = ", round(summ_lm$fstatistic[1],3), "\tp = ", signif(stats::pf(summ_lm$fstatistic[1],
                                                                                                                                     summ_lm$fstatistic[2],
                                                                                                                                     summ_lm$fstatistic[3],

@@ -73,9 +73,9 @@ hierarchical_reg = function(y,
                                   simultaneous = T,
                                   verbose = F)
       fin_chunks = append(fin_chunks, chunks[names(chunks) == tmp_hier$steps$step[tmp_hier$steps$R_sq_semi == max(tmp_hier$steps$R_sq_semi)]])
-      if(steps_verbose) cat(paste0("\t", names(fin_chunks)[length(fin_chunks)],
+      if(steps_verbose) cat(paste0("... ", names(fin_chunks)[length(fin_chunks)],
                                    " identified as the highest R^2 (", max(tmp_hier$steps$R_sq_semi), ") at this step.\n",
-                                   "\tCurrent chunk order: ", paste(names(fin_chunks), collapse = ", "),
+                                   "... Current chunk order: ", paste(names(fin_chunks), collapse = ", "),
                                    "\n\n"))
     }
     chunks = append(fin_chunks, chunks[!names(chunks) %in% names(fin_chunks)])
@@ -83,6 +83,7 @@ hierarchical_reg = function(y,
 
     if(steps_verbose) cat(paste0("Final Chunks order is:\t", paste(names(chunks), collapse = ", "),
                                  "\n\n"))
+    if(verbose) cat("Finished identifying stepwise set order. Starting overall hierarchical regression...\n\n")
   }
 
   # Get the output...
@@ -108,7 +109,7 @@ hierarchical_reg = function(y,
     step = ifelse(names(chunks)[s] != "",
                   names(chunks)[s],
                   paste("Step", s))
-    if(verbose) cat(paste("\n", step, "\n\tAdding", paste(unlist(chunks[s]), collapse = " & "),"to the model..\n\n"))
+    if(verbose) cat(paste("\n", step, "\n\tAdding", paste(unlist(chunks[s]), collapse = " & "),"to the model..\n"))
 
     tmp_reg = stats::lm(eval(parse(text=paste(y, "~", paste(c(unlist(chunks[1:s])), collapse =" + ")))),
                  data=mod$model)
