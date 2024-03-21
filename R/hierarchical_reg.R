@@ -12,6 +12,7 @@
 #' @param verbose Logical. If `True` the coefficients of the model will be output to the console for each chunk bring processed while the function runs. This will not be saved, as it is already part of the `lm` object and cam be accessed from there. Defaults to `False`.
 #' @param steps_verbose Logical. If `True` the order that the chunks were entered into the model will be output to the console while the function tries to identify the optimal order. If `NULL` (default) this will will take the value of `verbose`.
 #' @param simult_verbose Logical. If `True` the function will output which chunk's semipartial is being calculated to the console while running. If `NULL` (default) this will will take the value of `verbose`.
+#' @param warn Logical. If `True` (default) warnings will be output.
 #'
 #' @returns A list of data.frames. The first is the information about the different steps/chunks and their R-squared Changes. The second is the list of coefficient summaries at each step.
 #'
@@ -26,14 +27,15 @@ hierarchical_reg = function(y,
                             simultaneous = F,
                             verbose = F,
                             steps_verbose = NULL,
-                            simult_verbose = NULL) {
+                            simult_verbose = NULL,
+                            warn = T) {
   # Check for things that will cause errors
   if(!is.null(chunks) & typeof(chunks) != "list") stop("`chunks` must be a list of vectors containing variable names.")
   if(!is.null(chunks) & length(chunks) <= 1) stop("`chunks` must contain more than 1 vector of variable names.")
   if(stepwise & simultaneous) stop("You cannot (really, just shouldn't) do simultaneous and stepwise regressions at the same time... so this function doesn't allow it.")
 
   if(typeof(y) == "character"){
-    warning("Implementation of 'y' as an outcome variable has not been fully tested. Please, let Dani know if you encounter any errors.",
+    if(warn) warning("Implementation of 'y' as an outcome variable has not been fully tested. Please, let Dani know if you encounter any errors.",
             immediate. = T)
     if(is.null(data)) stop("Data is required when y is specifying an outcome variable.")
     if(!y %in% colnames(data)) stop("The outcome varaible is not in the data set.")
@@ -71,7 +73,8 @@ hierarchical_reg = function(y,
       tmp_hier = hierarchical_reg(mod,
                                   chunks = chunks[!names(chunks) %in% names(fin_chunks)],
                                   simultaneous = T,
-                                  verbose = F)
+                                  verbose = F,
+                                  warn=F)
       fin_chunks = append(fin_chunks, chunks[names(chunks) == tmp_hier$steps$step[tmp_hier$steps$R_sq_semi == max(tmp_hier$steps$R_sq_semi)]])
       if(steps_verbose) cat(paste0("... ", names(fin_chunks)[length(fin_chunks)],
                                    " identified as the highest R^2 (", max(tmp_hier$steps$R_sq_semi), ") at this step.\n",
@@ -148,7 +151,7 @@ hierarchical_reg = function(y,
     )
 
     #tmp_reg$model = mod$model
-    tmp_summ = lm_summarize(tmp_reg, warn=F, verbose=verbose)
+    tmp_summ = lm_summarize(tmp_reg, warn=warn, verbose=verbose)
     if(verbose) print(tmp_summ)
     coefs_output[[s]] = tmp_summ
     names(coefs_output)[s] = step
