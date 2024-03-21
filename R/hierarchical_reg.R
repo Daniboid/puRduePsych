@@ -173,7 +173,7 @@ hierarchical_reg = function(y,
       if(simult_verbose) cat(paste0("Evaluating semipartial for the set: ",
                                     names(chunks)[c]), "\n\n") # list(budy_chunk=unlist(unname(chunks[-c])), chunks[c]))
       tmp_chunks = list(budy_chunk=unlist(unname(chunks[-c])), chunks[c])
-      tmp_highr  = hierarchical_reg(mod, tmp_chunks)$steps
+      tmp_highr  = hierarchical_reg(mod, tmp_chunks, warn=warn)$steps
 
       step_output = rbind(step_output,
                       data.frame(
