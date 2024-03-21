@@ -30,7 +30,9 @@ lm_summarize = function(lm,
   #     (is.null(data) & !is.null(formula)) | (!is.null(data) & is.null(formula)) ) stop("You must either provide an lm object or data and a formula.")
 
   if(!is.numeric(CL) | CL > 1 | CL <= 0) stop("Confidence Level (CL) needs to be a numeric value between 0 and 1.")
-
+  if((any(attr(lm$terms,"dataClasses")=="factor") | any(attr(lm$terms,"dataClasses")=="factor")) &
+     (std | semi | partial)) warning("Dani messed up...don't trust the betas reported for 'factor' (nominal) or 'ordered factor' (ordinal) variables. He'll fix this soon...",
+                                     immediate. = T)
   # print(lm$call)
 
   dv = as.character(lm$terms)[2]
