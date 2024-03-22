@@ -12,7 +12,8 @@ hierarchical_reg(
   simultaneous = F,
   verbose = F,
   steps_verbose = NULL,
-  simult_verbose = NULL
+  simult_verbose = NULL,
+  warn = T
 )
 }
 \arguments{
@@ -35,6 +36,8 @@ Additionally, the summary of the steps will detail the semi-partial $R^2$ for ea
 \item{steps_verbose}{Logical. If `True` the order that the chunks were entered into the model will be output to the console while the function tries to identify the optimal order. If `NULL` (default) this will will take the value of `verbose`.}
 
 \item{simult_verbose}{Logical. If `True` the function will output which chunk's semipartial is being calculated to the console while running. If `NULL` (default) this will will take the value of `verbose`.}
+
+\item{warn}{Logical. If `True` (default) warnings will be output.}
 }
 \value{
 A list of data.frames. The first is the information about the different steps/chunks and their R-squared Changes. The second is the list of coefficient summaries at each step.

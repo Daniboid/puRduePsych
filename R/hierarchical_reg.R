@@ -59,6 +59,7 @@ hierarchical_reg = function(y,
 
   if(is.null(steps_verbose)) steps_verbose = verbose
   if(is.null(simult_verbose)) simult_verbose = verbose
+  # just a change
 
   ## For stepwise
 
