@@ -11,5 +11,6 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
-  car
+  car,
+  reghelper
 RoxygenNote: 7.3.1.9000
