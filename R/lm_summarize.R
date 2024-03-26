@@ -28,12 +28,10 @@ lm_summarize = function(lm,
                         warn = T) { #= NULL){
   # if( (!is.null(lm) & ( !is.null(data) | !is.null(formula) )) |
   #     (is.null(data) & !is.null(formula)) | (!is.null(data) & is.null(formula)) ) stop("You must either provide an lm object or data and a formula.")
-  requireNamespace(reghelper)
+
   if(!is.numeric(CL) | CL > 1 | CL <= 0) stop("Confidence Level (CL) needs to be a numeric value between 0 and 1.")
-  if((any(attr(lm$terms,"dataClasses")=="factor") | any(attr(lm$terms,"dataClasses")=="ordered")) &
-     (semi | partial) & warn) warning(paste("Partial and semipartial correlation coefficients for nominal and ordinal varaible types may be inaccurate.",
-                                            "\nThis function converts these varaible types to numeric variables to calculate partials and semipartials.",
-                                            "\nInterpret them at your own risk."),
+  if((any(attr(lm$terms,"dataClasses")=="factor") | any(attr(lm$terms,"dataClasses")=="factor")) &
+     (std | semi | partial) & warn) warning("Dani messed up...\ndon't trust the betas or semi/partial correlations reported for 'factor' (nominal) or 'ordered factor' (ordinal) variables.\nThe values calculated are for when those varaibles are transformed to numeric variables, not what R \ncalculates by default for thes types of variables...\n...He'll fix this soon...",
                                      immediate. = T)
   # print(lm$call)
 
@@ -46,13 +44,20 @@ lm_summarize = function(lm,
   lm_coef = data.frame(summ_lm$coefficients)
   names(lm_coef) = c("B", "S.E.", "t", "p.val")
 
-  for_cors = data.frame(lapply(lm$model, function(x) { return(as.numeric(x)) }))
+  for_cors = data.frame(lapply(lm$model, function(x) { x = as.numeric(x); return(x) }))
 
   cors = stats::cor(for_cors)
   if(std) {
-    lm_stdzd = suppressWarnings(reghelper::beta(lm))
-    lm_coef$Beta = data.frame(lm_stdzd$coefficients)$Estimate
-    lm_coef$Beta[1] = NA_real_
+    lm_stdzd = summary(lm(eval(parse(text=paste(dv, "~", x_term, collapse =" + "))),
+                       data.frame(lapply(lm$model, FUN = function(x) {
+                         if(is.numeric(x)) x = scale(x)
+                         if(is.factor(x))  x = scale(as.numeric(x))
+                         return(x)}) )))
+    lm_coef$Beta[1] = NA
+    for(x in ivs) {
+      lm_coef$Beta[startsWith(rownames(lm_coef),x)][1] =
+        data.frame(lm_stdzd$coefficients)$Estimate[rownames(lm_stdzd$coefficients) == x]
+    }
     lm_coef = lm_coef[,c("B", "S.E.", "Beta", "t", "p.val")]
   }
 
