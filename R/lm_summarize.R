@@ -31,7 +31,9 @@ lm_summarize = function(lm,
 
   if(!is.numeric(CL) | CL > 1 | CL <= 0) stop("Confidence Level (CL) needs to be a numeric value between 0 and 1.")
   if((any(attr(lm$terms,"dataClasses")=="factor") | any(attr(lm$terms,"dataClasses")=="factor")) &
-     (std | semi | partial) & warn) warning("Dani messed up...\ndon't trust the betas or semi/partial correlations reported for 'factor' (nominal) or 'ordered factor' (ordinal) variables.\nThe values calculated are for when those varaibles are transformed to numeric variables, not what R \ncalculates by default for thes types of variables...\n...He'll fix this soon...",
+     (std | semi | partial) & warn) warning(paste("Nominal and ordinal variables are converted to numeric variables before",
+                                                  "\n  beta, partial, and semipartial coefficients are calculated.",
+                                                  "\n\tYou have been warned."),
                                      immediate. = T)
   # print(lm$call)
 
