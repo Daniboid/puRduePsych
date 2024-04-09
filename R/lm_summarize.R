@@ -17,6 +17,8 @@
 #'
 #' @export lm_summarize
 
+requireNamespace("reghelper")
+
 lm_summarize = function(lm,
                         std = T,
                         semi = T,
@@ -31,11 +33,7 @@ lm_summarize = function(lm,
 
   if(!is.numeric(CL) | CL > 1 | CL <= 0) stop("Confidence Level (CL) needs to be a numeric value between 0 and 1.")
   if((any(attr(lm$terms,"dataClasses")=="factor") | any(attr(lm$terms,"dataClasses")=="factor")) &
-     (std | semi | partial) & warn) warning(paste("Nominal and ordinal variables are converted to numeric variables before",
-                                                  "beta, partial, and semipartial coefficients are calculated."
-                                                  ),
-                                     immediate. = T)
-  # print(lm$call)
+     (std | semi | partial) & warn) message("HEADS-UP: Nominal and ordinal variables are converted to numeric variables before partial, and semipartial coefficients are calculated." )
 
   dv = as.character(lm$terms)[2]
   x_term = as.character(lm$terms)[3]
@@ -46,24 +44,20 @@ lm_summarize = function(lm,
   lm_coef = data.frame(summ_lm$coefficients)
   names(lm_coef) = c("B", "S.E.", "t", "p.val")
 
+  ## Correlations
   for_cors = data.frame(lapply(lm$model, function(x) { x = as.numeric(x); return(x) }))
-
   cors = stats::cor(for_cors)
+
+  ## Standardized Coefficients
   if(std) {
-    lm_stdzd = summary(lm(eval(parse(text=paste(dv, "~", x_term, collapse =" + "))),
-                       data.frame(lapply(lm$model, FUN = function(x) {
-                         if(is.numeric(x)) x = scale(x)
-                         if(is.factor(x))  x = scale(as.numeric(x))
-                         return(x)}) )))
-    lm_coef$Beta[1] = NA
-    for(x in ivs) {
-      lm_coef$Beta[startsWith(rownames(lm_coef),x)][1] =
-        data.frame(lm_stdzd$coefficients)$Estimate[rownames(lm_stdzd$coefficients) == x]
-    }
+    lm_stdzd = suppressWarnings(reghelper::beta(lm))
+    lm_coef$Beta = unname(lm_stdzd$coefficients[,1])
+    lm_coef$Beta[1] = NA_real_
     lm_coef = lm_coef[,c("B", "S.E.", "Beta", "t", "p.val")]
   }
 
-  if(semi & length(ivs) > 2) {
+  ## Semi-partial Correlations
+  if(semi & length(ivs) > 1) {
     lm_coef$semi = NA_real_
 
     for(x in ivs) {
@@ -75,10 +69,11 @@ lm_summarize = function(lm,
     }
 
     for(x in 2:nrow(lm_coef)) if(lm_coef$B[x] < 0 ) lm_coef$semi[x] = -1*lm_coef$semi[x]
-  } else if(semi & warn) warning("Semi-partial correlations can only be obtained if more than one predictor is in the model. \n\t Semi-partial correlations were not computed...")
+  } else if(semi & warn) message("Semi-partial correlations can only be obtained if more than one predictor is in the model. \n\t Semi-partial correlations were not computed...")
 
 
-  if(partial & length(ivs) > 2) {
+  ## Partial Correlations
+  if(partial & length(ivs) > 1) {
     lm_coef$partial = NA_real_
     for(x in ivs) {
       lm_coef$partial[startsWith(rownames(lm_coef),x)][1] =
@@ -92,8 +87,9 @@ lm_summarize = function(lm,
 
 
     for(x in 2:nrow(lm_coef)) if(lm_coef$B[x] < 0 ) lm_coef$partial[x] = -1*lm_coef$partial[x]
-  } else if(partial & warn) warning("Partial correlations can only be obtained if more than one predictor is in the model. \n\t Partial correlations were not computed...")
+  } else if(partial & warn) message("Partial correlations can only be obtained if more than one predictor is in the model. \n\t Partial correlations were not computed...")
 
+  ## Confidence Intervals
   if(CI){
     df = nrow(lm$model) - ncol(lm$model)
     t_crit = stats::qt(1-((1-CL)/2), df)
@@ -120,8 +116,6 @@ lm_summarize = function(lm,
                                                                                                                                     lower.tail = F),3),
               "\n\n",   sep = "")
         )
-
-    # print(lm_coef)
   }
 
   if (correlations) {

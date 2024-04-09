@@ -10,6 +10,9 @@ Description: Mostly Linear regression stuffs. Still writing this package and upd
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports:
+Depends:
   car
+  interactions
+  psych
+  reghelper
 RoxygenNote: 7.3.1.9000
