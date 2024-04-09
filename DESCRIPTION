@@ -1,6 +1,6 @@
 Package: puRduePsych
 Title: Functions to be used in the Department of Psychological Science's required statistics courses: ANOVA, and Multiple regression. Additional functionality will be added as needed
-Version: 0.0.240319
+Version: 0.0.240409
 Authors@R: 
     person(given = "Dani Larranaga",
            family = "McGough",
@@ -11,8 +11,8 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Depends:
-  car
-  interactions
-  psych
-  reghelper
+  car >= 3.1.0
+  interactions >= 1.1.3
+  psych >= 2.4.1
+  reghelper >= 1.1.2
 RoxygenNote: 7.3.1.9000
