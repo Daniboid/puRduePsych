@@ -6,9 +6,12 @@
 #' @returns Returns a `data.frame` containing all of the relevant information.
 #'
 #' @export omega_sq
+#' @import car
 
 
 omega_sq <- function(aov_in, type = c("I", "II", "III", "1", "2", "3")){
+  requireNamespace("car")
+
   type_1_sumary = summary(aov_in)
   SSt = type_1_sumary[[1]]$`Sum Sq`
 

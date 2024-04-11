@@ -16,8 +16,8 @@
 #' @returns A data.frame with the corresponding summary values.
 #'
 #' @export lm_summarize
+#' @import reghelper
 
-requireNamespace("reghelper")
 
 lm_summarize = function(lm,
                         std = T,
@@ -30,6 +30,8 @@ lm_summarize = function(lm,
                         warn = T) { #= NULL){
   # if( (!is.null(lm) & ( !is.null(data) | !is.null(formula) )) |
   #     (is.null(data) & !is.null(formula)) | (!is.null(data) & is.null(formula)) ) stop("You must either provide an lm object or data and a formula.")
+
+  requireNamespace("reghelper")
 
   if(!is.numeric(CL) | CL > 1 | CL <= 0) stop("Confidence Level (CL) needs to be a numeric value between 0 and 1.")
   if((any(attr(lm$terms,"dataClasses")=="factor") | any(attr(lm$terms,"dataClasses")=="factor")) &
