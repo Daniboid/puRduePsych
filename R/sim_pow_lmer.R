@@ -9,8 +9,8 @@
 #' @import doSNOW
 #' @import lme4
 #' @import lmerTest
-#' @export sim.dat_lmer
-#' @export sim.pow.lmer
+#' @export sim_dat_lmer
+#' @export sim_pow_lmer
 #'
 
 
