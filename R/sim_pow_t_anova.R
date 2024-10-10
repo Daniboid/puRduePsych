@@ -21,49 +21,8 @@
 #' @import parallel
 #' @import doSNOW
 #' @import car
-#' @export sim_dat_t_anova
 #' @export sim_pow_t_anova
 #'
-
-sim_dat_t_anova = function(groups,
-                             n,
-                             means,
-                             sds){
-  if(length(groups) > 1 & typeof(groups) == "character") {
-    group_names = groups
-    groups = length(groups)
-  }
-
-  if(length(groups) > 1 | !all.equal(groups, as.integer(groups)) | groups <= 0) stop("'groups' must be a single positive integer.")
-  if(length(n) != 1 & length(n) != groups) stop("'n' must be either a single positive integer or a vector of positive integers
-                                                with the same length as the number of groups specified.")
-  if(length(means) != groups) stop("Number of means provided does not match the number of groups.")
-  if(length(sds) != 1 & length(sds) != groups) stop("'sds' must be either a single standard deviation value or
-                                                    a vector of values specifying the sd for each group")
-  if(!all(sds > 0)) stop("All standard deviation values must be positive.")
-
-  if(length(n) == 1) n = rep(n, groups)
-  if(length(sds) == 1) sds = rep(sds, groups)
-
-  sim_dat = data.frame(group = c(), DV = c())
-
-  if(!exists(group_names)){
-    for(g in 1:groups){
-      sim_dat = rbind(sim_dat,
-                      data.frame(group = rep(g, n[g]),
-                                 DV = rnorm(n[g], means[g], sds[g])))
-    }
-  } else {
-    for(g in 1:groups){
-      sim_dat = rbind(sim_dat,
-                      data.frame(group = rep(group_names[g], n[g]),
-                                 DV = rnorm(n[g], means[g], sds[g])))
-    }
-  }
-
-  return(sim_dat)
-}
-
 
 sim_pow_t_anova = function(groups,
                              n,
@@ -175,6 +134,5 @@ sim_pow_t_anova = function(groups,
   close(pb)
   parallel::stopCluster(cl)
   return(mean(signif))
-
 
 }
