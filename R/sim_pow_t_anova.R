@@ -50,6 +50,7 @@ sim_pow_t_anova = function(groups,
   if(length(sds) != 1 & length(sds) != groups) stop("'sds' must be either a single standard deviation value or
                                                     a vector of values specifying the sd for each group")
   if(!all(sds > 0)) stop("All standard deviation values must be positive.")
+  if(groups == 2 & paired & length(n) > 1 & !all(n==n[1]) ) stop("Paired samples *t*-tests need equal group sizes.")
 
 
   requireNamespace("parallel")
@@ -62,7 +63,7 @@ sim_pow_t_anova = function(groups,
   if(groups == 1){ # Is it a one-sample test?
     # notify about ignoring
     if(!is.null(anova_type)) rlang::warn("`anova_type` provided for a one-sample test; this argument will be ignored...")
-    if(!is.null(paired)) rlang::warn("`paired` provided for a one sample test; this argument will be ignored...")
+    if(paired) rlang::warn("`paired` provided for a one sample test; this argument will be ignored...")
     if(!is.null(eq_var)) rlang::warn("`eq_var` provided for a one sample test; this argument will be ignored...")
 
     # set defaults
@@ -81,15 +82,12 @@ sim_pow_t_anova = function(groups,
     # notify about ignoring
     if(!is.null(mu)) rlang::warn("`mu` provided for an ANOVA; this argument will be ignored...")
     if(!is.null(alternative)) rlang::warn("`alternative` provided for a test with 3 or more groups. One-Way ANOVA is always right-tailed; this argument will be ignored...")
-    if(!is.null(paired)) rlang::warn("`paired` provided for a test with 3 or more groups. This function cannot currently handle repeated
+    if(paired) rlang::warn("`paired` provided for a test with 3 or more groups. This function cannot currently handle repeated
                               measures ANOVA; this argument will be ignored...")
 
     # set defaults
     if(is.null(anova_type)) anova_type = 3
   }
-
-
-  if(groups == 2 & !is.null(paired)) if(paired & length(n) > 1) if(!all(n==n[1])) stop("Paired samples *t*-tests need equal group sizes.")
 
 
   cl = parallel::makeCluster(parallel::detectCores())
