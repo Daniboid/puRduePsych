@@ -94,40 +94,14 @@ sim_pow_t_anova = function(groups,
   opts <- list(progress=progress)
   signif = foreach (s = 1:n_sims, .combine = rbind, .options.snow=opts
   ) %dopar% {
-    sim_dat_t_anova = function(groups,
-                               n,
-                               means,
-                               sds){
-      if(length(groups) > 1 | !all.equal(groups, as.integer(groups)) | groups <= 0) stop("'groups' must be a single positive integer.")
-      if(length(n) != 1 & length(n) != groups) stop("'n' must be either a single positive integer or a vector of positive integers
-                                                with the same length as the number of groups specified.")
-      if(length(means) != groups) stop("Means must be specified for each group.")
-      if(length(sds) != 1 & length(sds) != groups) stop("'sds' must be either a single standard deviation value or
-                                                    a vector of values specifying the sd for each group")
-      if(!all(sds > 0)) stop("All standard deviation values must be positive.")
-
-      if(length(n) == 1) n = rep(n, groups)
-      if(length(sds) == 1) sds = rep(sds, groups)
-
-      sim_dat = data.frame(group = c(), DV = c())
-
-      for(g in 1:groups){
-        sim_dat = rbind(sim_dat,
-                        data.frame(group = rep(g, n[g]),
-                                   DV = rnorm(n[g], means[g], sds[g])))
-      }
-
-      return(sim_dat)
-    }
-
-    fake = sim_dat_t_anova(groups, n, means, sds)   #generate a fake dataset
+    fake = puRduePsych::sim_dat_t_anova(groups, n, means, sds)   #generate a fake dataset
     pval = ifelse(groups == 1,
-                  t.test(fake$DV, alternative = alternative, mu = mu, conf.level = 1-alpha)$p.val,
+                  stats::t.test(fake$DV, alternative = alternative, mu = mu, conf.level = 1-alpha)$p.val,
                   ifelse(groups == 2,
-                         t.test(DV ~ group, data = fake, paired = paired, alternative = alternative, mu = mu, conf.level = 1-alpha)$p.val,
+                         stats::t.test(DV ~ group, data = fake, paired = paired, alternative = alternative, mu = mu, conf.level = 1-alpha)$p.val,
                          ifelse(anova_type == 1,
-                                summary(aov(DV ~ group, data=fake))[[1]]$`Pr(>F)`[1],
-                                car::Anova(aov(DV ~ group, data=fake), type = anova_type)$`Pr(>F)`[1])))
+                                stats::summary(stats::aov(DV ~ group, data=fake))[[1]]$`Pr(>F)`[1],
+                                car::Anova(stats::aov(DV ~ group, data=fake), type = anova_type)$`Pr(>F)`[1])))
     for_return = pval < alpha
     return(for_return)
   }
