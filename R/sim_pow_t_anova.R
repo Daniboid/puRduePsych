@@ -49,7 +49,6 @@ sim_pow_t_anova = function(groups,
   if(length(sds) != 1 & length(sds) != groups) stop("'sds' must be either a single standard deviation value or
                                                     a vector of values specifying the sd for each group")
   if(!all(sds > 0)) stop("All standard deviation values must be positive.")
-  if(paired & all.equal(n[1], n) & groups == 2) stop("Paired samples *t*-tests need equal group sizes.")
 
 
   requireNamespace("parallel")
@@ -88,6 +87,9 @@ sim_pow_t_anova = function(groups,
     # set defaults
     if(is.null(anova_type)) anova_type = 3
   }
+
+
+  if(groups == 2 & !is.null(paired) & all.equal(n[1], n)) stop("Paired samples *t*-tests need equal group sizes.")
 
 
   cl = parallel::makeCluster(parallel::detectCores())
