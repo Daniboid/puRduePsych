@@ -47,6 +47,7 @@ sim_pow_t_anova = function(groups,
   if(length(sds) != 1 & length(sds) != groups) stop("'sds' must be either a single standard deviation value or
                                                     a vector of values specifying the sd for each group")
   if(!all(sds > 0)) stop("All standard deviation values must be positive.")
+  if(paired & all.equal(n[1], n)) stop("Paired samples *t*-tests need equal group sizes.")
 
 
   requireNamespace("parallel")
@@ -74,7 +75,7 @@ sim_pow_t_anova = function(groups,
     # set defaults
     if(is.null(alternative)) alternative = "two.sided"
     if(is.null(eq_var)) eq_var = F
-    if(is.null(paired)) paired = F
+    if(is.null(paired) | !paired) paired = NULL
   } else { # Is it a one-way ANOVA?
     # notify about ignoring
     if(!is.null(mu)) warn("`mu` provided for an ANOVA; this argument will be ignored...")
@@ -98,7 +99,9 @@ sim_pow_t_anova = function(groups,
     pval = ifelse(groups == 1,
                   stats::t.test(fake$DV, alternative = alternative, mu = mu, conf.level = 1-alpha)$p.val,
                   ifelse(groups == 2,
-                         stats::t.test(DV ~ group, data = fake, paired = paired, alternative = alternative, conf.level = 1-alpha)$p.val,
+                         ifelse(is.null(paired),
+                                stats::t.test(DV ~ group, data = fake, alternative = alternative, conf.level = 1-alpha)$p.val,
+                                stats::t.test(fake$DV[fake$group == 1], fake$DV[fake$group == 2], data = fake, paired = paired, alternative = alternative, conf.level = 1-alpha)$p.val),
                          ifelse(anova_type == 1,
                                 stats::summary.aov(stats::aov(DV ~ group, data=fake))[[1]]$`Pr(>F)`[1],
                                 car::Anova(stats::aov(DV ~ group, data=fake), type = anova_type)$`Pr(>F)`[1])))
