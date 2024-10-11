@@ -40,13 +40,13 @@ sim_dat_t_anova = function(groups,
   if(is.null(group_names)){
     for(g in 1:groups){
       sim_dat = rbind(sim_dat,
-                      data.frame(group = rep(g, n[g]),
+                      data.frame(group = factor(rep(g, n[g])),
                                  DV = rnorm(n[g], means[g], sds[g])))
     }
   } else {
     for(g in 1:groups){
       sim_dat = rbind(sim_dat,
-                      data.frame(group = rep(group_names[g], n[g]),
+                      data.frame(group = factor(rep(group_names[g], n[g])),
                                  DV = rnorm(n[g], means[g], sds[g])))
     }
   }
