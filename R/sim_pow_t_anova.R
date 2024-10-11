@@ -23,6 +23,7 @@
 #' @import car
 #' @import stats
 #' @import utils
+#' @import rlang
 #' @export sim_pow_t_anova
 #'
 
@@ -60,9 +61,9 @@ sim_pow_t_anova = function(groups,
 
   if(groups == 1){ # Is it a one-sample test?
     # notify about ignoring
-    if(!is.null(anova_type)) warn("`anova_type` provided for a one-sample test; this argument will be ignored...")
-    if(!is.null(paired)) warn("`paired` provided for a one sample test; this argument will be ignored...")
-    if(!is.null(eq_var)) warn("`eq_var` provided for a one sample test; this argument will be ignored...")
+    if(!is.null(anova_type)) rlang::warn("`anova_type` provided for a one-sample test; this argument will be ignored...")
+    if(!is.null(paired)) rlang::warn("`paired` provided for a one sample test; this argument will be ignored...")
+    if(!is.null(eq_var)) rlang::warn("`eq_var` provided for a one sample test; this argument will be ignored...")
 
     # set defaults
     if (is.null(mu)) mu = 0
