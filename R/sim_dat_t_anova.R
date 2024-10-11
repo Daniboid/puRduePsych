@@ -22,7 +22,7 @@ sim_dat_t_anova = function(groups,
   if(length(groups) > 1 & typeof(groups) == "character") {
     group_names = groups
     groups = length(groups)
-  }
+  } else group_names = NULL
 
   if(length(groups) > 1 | !all.equal(groups, as.integer(groups)) | groups <= 0) stop("'groups' must be a single positive integer.")
   if(length(n) != 1 & length(n) != groups) stop("'n' must be either a single positive integer or a vector of positive integers
@@ -37,7 +37,7 @@ sim_dat_t_anova = function(groups,
 
   sim_dat = data.frame(group = c(), DV = c())
 
-  if(!exists(group_names)){
+  if(is.null(group_names)){
     for(g in 1:groups){
       sim_dat = rbind(sim_dat,
                       data.frame(group = rep(g, n[g]),
