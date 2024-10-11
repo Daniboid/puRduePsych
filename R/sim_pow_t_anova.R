@@ -98,7 +98,7 @@ sim_pow_t_anova = function(groups,
     pval = ifelse(groups == 1,
                   stats::t.test(fake$DV, alternative = alternative, mu = mu, conf.level = 1-alpha)$p.val,
                   ifelse(groups == 2,
-                         stats::t.test(DV ~ group, data = fake, paired = paired, alternative = alternative, mu = mu, conf.level = 1-alpha)$p.val,
+                         stats::t.test(DV ~ group, data = fake, paired = paired, alternative = alternative, conf.level = 1-alpha)$p.val,
                          ifelse(anova_type == 1,
                                 stats::summary(stats::aov(DV ~ group, data=fake))[[1]]$`Pr(>F)`[1],
                                 car::Anova(stats::aov(DV ~ group, data=fake), type = anova_type)$`Pr(>F)`[1])))
