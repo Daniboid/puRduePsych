@@ -89,7 +89,7 @@ sim_pow_t_anova = function(groups,
   }
 
 
-  if(groups == 2 & !is.null(paired) & all.equal(n[1], n)) stop("Paired samples *t*-tests need equal group sizes.")
+  if(groups == 2 & !is.null(paired)) if(paired & length(n) > 1) if(!all(n==n[1])) stop("Paired samples *t*-tests need equal group sizes.")
 
 
   cl = parallel::makeCluster(parallel::detectCores())
