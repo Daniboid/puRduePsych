@@ -35,7 +35,7 @@ sim_pow_t_anova = function(groups,
                              alternative = NULL,
                              eq_var = NULL,
                              mu = NULL,
-                             paired = NULL,
+                             paired = F,
                              anova_type = NULL){
   if(length(groups) > 1 & typeof(groups) == "character") {
     group_names = groups
@@ -76,7 +76,6 @@ sim_pow_t_anova = function(groups,
     # set defaults
     if(is.null(alternative)) alternative = "two.sided"
     if(is.null(eq_var)) eq_var = F
-    if(is.null(paired) | !paired) paired = NULL
   } else { # Is it a one-way ANOVA?
     # notify about ignoring
     if(!is.null(mu)) rlang::warn("`mu` provided for an ANOVA; this argument will be ignored...")
@@ -103,7 +102,7 @@ sim_pow_t_anova = function(groups,
     pval = ifelse(groups == 1,
                   stats::t.test(fake$DV, alternative = alternative, mu = mu, conf.level = 1-alpha)$p.val,
                   ifelse(groups == 2,
-                         ifelse(is.null(paired),
+                         ifelse(!paired,
                                 stats::t.test(DV ~ group, data = fake, alternative = alternative, conf.level = 1-alpha)$p.val,
                                 stats::t.test(fake$DV[fake$group == 1], fake$DV[fake$group == 2], paired = paired, alternative = alternative, conf.level = 1-alpha)$p.val),
                          ifelse(anova_type == 1,
