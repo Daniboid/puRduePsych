@@ -6,6 +6,15 @@
 \usage{
 post_hoc_sim_pow_lm(lm, n_forSim = NULL, n_sims = 10000, alpha = 0.05)
 }
+\arguments{
+\item{lm}{An `lm()` object. The regression model for which to simulate power.}
+
+\item{n_forSim}{Integer. The number of observations to be used in the linear model simulations.}
+
+\item{n_sims}{Integer. The number of simulations to run.}
+
+\item{alpha}{Float between 0 and 1. The significance level of the test.}
+}
 \description{
 see title
 }

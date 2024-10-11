@@ -7,6 +7,8 @@
 #'
 #' @import parallel
 #' @import doSNOW
+#' @import stats
+#' @import utils
 #' @export post_hoc_sim_pow_lm
 #' @export determine_n_lm
 #'

@@ -2,7 +2,7 @@
 % Please edit documentation in R/sim_dat_lm.R, R/sim_pow_lm.R
 \name{sim_dat_lm}
 \alias{sim_dat_lm}
-\title{Data Simulation and Power Analysis for Regression}
+\title{Simulate new data based on a Linear Regression Model}
 \usage{
 sim_dat_lm(lm, n_forSim = NULL)
 

@@ -11,6 +11,8 @@
 #' @param sds Positive Numeric Integer or Vector. The theoretical standard deviation(s) for the group(s).
 #'
 #'
+#' @import stats
+#' @import utils
 #' @export sim_dat_t_anova
 
 

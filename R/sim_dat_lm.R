@@ -1,14 +1,14 @@
-#' Data Simulation and Power Analysis for Regression
+#' Simulate new data based on a Linear Regression Model
 #'
 #' @description
 #' see title
 #'
 #'
 #'
+#' @import stats
+#' @import utils
 #' @export sim_dat_lm
 #'
-
-
 
 sim_dat_lm = function (lm,
                        n_forSim=NULL){
@@ -27,13 +27,13 @@ sim_dat_lm = function (lm,
 
 
   observation = rep(1:n_forSim)     # Create a number of rows
-  df_sim = data.frame(observation)
+  df_sim = base::data.frame(observation)
 
   for (iv in ivs){ # For each IV...
     if (is.numeric(lm$model[,iv])) { # if it is numeric...
-      tmp_mu = mean(lm$model[,iv]) # calculate the mean...
-      tmp_sd = sd(lm$model[,iv])   # and standard deviation...
-      df_sim[,iv] = rnorm(n_forSim, tmp_mu, tmp_sd) # use those to generate a simulated sample...
+      tmp_mu = stats::mean(lm$model[,iv]) # calculate the mean...
+      tmp_sd = stats::sd(lm$model[,iv])   # and standard deviation...
+      df_sim[,iv] = stats::rnorm(n_forSim, tmp_mu, tmp_sd) # use those to generate a simulated sample...
     } else {
       tmp_ratio = table(lm$model[,iv])/sum(table(lm$model[,iv]))
       tmp_vect  = rep(names(tmp_ratio), round(tmp_ratio*n_forSim))
@@ -44,13 +44,13 @@ sim_dat_lm = function (lm,
     } # otherwise assume the same number of nominal and ordinal observations in the simulated sample.
   }
 
-  df_sim$perf_pred_dv = predict(lm, newdata=df_sim)
+  df_sim$perf_pred_dv = stats::predict.lm(lm, newdata=df_sim)
 
-  sd_resid  = sd(lm$residuals)
+  sd_resid  = stats::sd(lm$residuals)
 
-  df_sim[,dv] <- rnorm(n_forSim,
-                       mean(df_sim$perf_pred_dv),
-                       sd_resid)
+  df_sim[,dv] <- stats::rnorm(n_forSim,
+                              stats::mean(df_sim$perf_pred_dv),
+                              sd_resid)
 
   return(df_sim)
 }

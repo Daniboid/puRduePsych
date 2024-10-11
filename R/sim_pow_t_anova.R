@@ -21,6 +21,8 @@
 #' @import parallel
 #' @import doSNOW
 #' @import car
+#' @import stats
+#' @import utils
 #' @export sim_pow_t_anova
 #'
 
@@ -69,8 +71,8 @@ sim_pow_t_anova = function(groups,
 
   } else if (groups == 2){ # Is it a two-sample test?
     # notify about ignoring
-    if(!is.null(anova_type)) warn("`anova_type` provided for a two-sample test; this argument will be ignored...")
-    if(!is.null(mu)) warn("`mu` provided for a two-sample test; this argument will be ignored...")
+    if(!is.null(anova_type)) rlang::warn("`anova_type` provided for a two-sample test; this argument will be ignored...")
+    if(!is.null(mu)) rlang::warn("`mu` provided for a two-sample test; this argument will be ignored...")
 
     # set defaults
     if(is.null(alternative)) alternative = "two.sided"
@@ -78,9 +80,9 @@ sim_pow_t_anova = function(groups,
     if(is.null(paired) | !paired) paired = NULL
   } else { # Is it a one-way ANOVA?
     # notify about ignoring
-    if(!is.null(mu)) warn("`mu` provided for an ANOVA; this argument will be ignored...")
-    if(!is.null(alternative)) warn("`alternative` provided for a test with 3 or more groups. One-Way ANOVA is always right-tailed; this argument will be ignored...")
-    if(!is.null(paired)) warn("`paired` provided for a test with 3 or more groups. This function cannot currently handle repeated
+    if(!is.null(mu)) rlang::warn("`mu` provided for an ANOVA; this argument will be ignored...")
+    if(!is.null(alternative)) rlang::warn("`alternative` provided for a test with 3 or more groups. One-Way ANOVA is always right-tailed; this argument will be ignored...")
+    if(!is.null(paired)) rlang::warn("`paired` provided for a test with 3 or more groups. This function cannot currently handle repeated
                               measures ANOVA; this argument will be ignored...")
 
     # set defaults
@@ -90,10 +92,10 @@ sim_pow_t_anova = function(groups,
 
   cl = parallel::makeCluster(parallel::detectCores())
   doSNOW::registerDoSNOW(cl)
-  pb = txtProgressBar(min = 1, max = n_sims, style = 3)
+  pb = utils::txtProgressBar(min = 1, max = n_sims, style = 3)
   progress <- function(n) setTxtProgressBar(pb, n)
   opts <- list(progress=progress)
-  signif = foreach (s = 1:n_sims, .combine = rbind, .options.snow=opts
+  signif = foreach::foreach (s = 1:n_sims, .combine = rbind, .options.snow=opts
   ) %dopar% {
     fake = puRduePsych::sim_dat_t_anova(groups, n, means, sds)   #generate a fake dataset
     pval = ifelse(groups == 1,
@@ -101,7 +103,7 @@ sim_pow_t_anova = function(groups,
                   ifelse(groups == 2,
                          ifelse(is.null(paired),
                                 stats::t.test(DV ~ group, data = fake, alternative = alternative, conf.level = 1-alpha)$p.val,
-                                stats::t.test(fake$DV[fake$group == 1], fake$DV[fake$group == 2], data = fake, paired = paired, alternative = alternative, conf.level = 1-alpha)$p.val),
+                                stats::t.test(fake$DV[fake$group == 1], fake$DV[fake$group == 2], paired = paired, alternative = alternative, conf.level = 1-alpha)$p.val),
                          ifelse(anova_type == 1,
                                 stats::summary.aov(stats::aov(DV ~ group, data=fake))[[1]]$`Pr(>F)`[1],
                                 car::Anova(stats::aov(DV ~ group, data=fake), type = anova_type)$`Pr(>F)`[1])))
