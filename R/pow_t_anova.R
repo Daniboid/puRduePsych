@@ -139,17 +139,15 @@ pow_t_anova = function(groups,
 
 
     if (eq_var & !paired) {
-      df = ifelse(length(n) == 1,
-                  2*n-2,
-                  sum(n-2))
+      if(length(n)==1) df = n*2-2 else df = sum(n)-2
 
 
       # find critical value(s)
       crit_vals = ifelse(c(alternative, alternative) == "two.sided",
                          qt(c(alpha/2, 1-(alpha/2)), df = df),
                          ifelse(alternative == 'less',
-                                qt(alpha, df = n-2),
-                                qt(1-alpha, df = n-2)))
+                                qt(alpha, df = df),
+                                qt(1-alpha, df = df)))
       # Cohen's d
       d = ifelse(length(sds)== 1,
                  (means[1] - means[2])/sds,
@@ -158,11 +156,11 @@ pow_t_anova = function(groups,
                         (means[1] - means[2]) / sqrt(((n[1]-1)*sds[1]^2+(n[2]-1)*sds[2]^2)/(sum(n)-2))))
 
       #NCP
-      ncp = d*sqrt(n/2)
+      if(length(n)==1) ncp = d*sqrt(n/2) else ncp = d*(1/sqrt(1/n[1]+1/n[2]))
 
       # Power
       pow = ifelse(alternative == "two.sided",
-                   pt(min(crit_vals), df = df, ncp = ncp) + pt(max(crit_vals), n-2, ncp = ncp, lower.tail = F),
+                   pt(min(crit_vals), df = df, ncp = ncp) + pt(max(crit_vals), df, ncp = ncp, lower.tail = F),
                    ifelse(alternative == "less",
                           pt(crit_vals, df = df, ncp = ncp),
                           pt(crit_vals, df = df, ncp = ncp, lower.tail = F)))
@@ -179,6 +177,7 @@ pow_t_anova = function(groups,
           ggpubr::theme_pubr() +
           ggplot2::scale_color_manual(values = c("#cfb991", "#000000"))
 
+        pwr::pwr.t2n.test(n1 = 25, n2 = 30, d = .2)
 
         if (alternative == "two.sided") {
           plt = plt +
@@ -234,7 +233,7 @@ pow_t_anova = function(groups,
                         (means[1] - means[2]) / sqrt(((n[1]-1)*sds[1]^2+(n[2]-1)*sds[2]^2)/(sum(n)-2))))
 
       #NCP
-      ncp = d*sqrt(n/2)
+      if(length(n)==1) ncp = d*sqrt(n/2) else ncp = d*(1/sqrt(1/n[1]+1/n[2]))
 
       # Power
       pow = ifelse(alternative == "two.sided",

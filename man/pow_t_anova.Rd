@@ -39,6 +39,8 @@ pow_t_anova(
 
 \item{anova_type}{Integer Scalar from 1 to 3. The type of Sums of Squared Deviations to be used for the one-way ANOVA. Ignored if less than 3 groups.}
 
+\item{show_plot}{Logical (Boolean). Should a plot be output as well? Defaults to `FALSE`}
+
 \item{n_sims}{Positive Integer Scalar. The number of simulations to base the estimate on. Default is 10,000.}
 }
 \description{
