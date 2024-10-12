@@ -3,6 +3,8 @@
 #' @description
 #' see title
 #'
+#' @param lm Object of type `lm`. The object from which to generate a new data-set.
+#' @param n_forSim Integer Scalar. The number of observations to create in the new data. If `NULL` the same number of observations as in the original `lm` will be used.
 #'
 #'
 #' @import stats

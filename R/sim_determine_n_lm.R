@@ -17,12 +17,12 @@
 #' @import doSNOW
 #' @import stats
 #' @import utils
-#' @export determine_n_lm
+#' @export sim_determine_n_lm
 #'
 
 
 
-determine_n_lm = function(lm,
+sim_determine_n_lm = function(lm,
                           effect,#=NULL,
                           n_sims=10000,
                           alpha=.05,

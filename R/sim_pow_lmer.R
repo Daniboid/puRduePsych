@@ -7,6 +7,9 @@
 #'
 #' @import parallel
 #' @import doSNOW
+#' @import foreach
+#' @import lme4
+#' @import arm
 #' @import lmerTest
 #' @import stats
 #' @import utils
@@ -24,7 +27,7 @@ sim_pow_lmer = function (J=68,
   #pb = txtProgressBar(min = 1, max = n.sims, style = 3)
   #progress <- function(n) setTxtProgressBar(pb, n)
   #opts <- list(progress=progress)
-  signif = foreach (s = 1:n.sims, .combine = rbind #, .options.snow=opts
+  signif = foreach::foreach (s = 1:n.sims, .combine = rbind #, .options.snow=opts
   ) %dopar% {
 
     fake = puRduePsych::sim.dat(J,K,cor.PnR.supp)     #generate a fake dataset

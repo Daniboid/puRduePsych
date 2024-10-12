@@ -7,7 +7,6 @@
 #' @param n Positive Integer Scalar or Vector. The number of observations per group. If a scalar is provided, all groups will have that number of observations. If a vector is provided, the there must be a number of integers equal to `groups`; these will be the numbers of observations in a given group.
 #' @param means Numeric Vector. The theoretical means for each group.
 #' @param sds Positive Numeric Integer or Vector. The theoretical standard deviation(s) for the group(s).
-#' @param n_sims Positive Integer Scalar. The number of simulations to base the estimate on. Default is 10,000.
 #' @param alpha Positive Scalar between 0 and 1. The significance threshold for the test. Defaults to .05
 #' @param alternative Character (String). The alternative hypothesis to be used by a t-test. Values of "two.sided" (default), "less", or "greater" are valid. Ignored if there are 3 or more groups.
 #' @param mu Integer Scalar. Null mean to test against for a one-sample test. Defaults to 0. Ignored if groups are greater than 1.
@@ -23,6 +22,7 @@
 #' @import stats
 #' @import ggplot2
 #' @import ggpubr
+#' @import tidyr
 #' @export pow_t_anova
 #'
 
@@ -179,8 +179,6 @@ pow_t_anova = function(groups,
           ggpubr::theme_pubr() +
           ggplot2::scale_color_manual(values = c("#cfb991", "#000000"))
 
-        pwr::pwr.t2n.test(n1 = 25, n2 = 30, d = .2)
-
         if (alternative == "two.sided") {
           plt = plt +
            ggplot2::geom_ribbon(
@@ -314,10 +312,12 @@ pow_t_anova = function(groups,
     if (length(n) == 1) SS_a = n*sum((means-mean(means))^2) else SS_a = sum(n*(means-mean(unlist(foreach::foreach(m = means, n = n) %do% {rep(m, n)})))^2)
     if(length(sds)==1) SS_e = sds^2*(n-1)*groups else SS_e = sum(sds^2*(n-1))
     eta_sq = SS_a/(SS_a+SS_e)
-    f2 = eta_sq/(1-eta_sq)
-    print(f2)
+
 
     # Cohen's f
+    f2 = eta_sq/(1-eta_sq)
+
+    # NCP
     if(length(n)==1) ncp = groups * n * eta_sq/(1-eta_sq) else ncp = sum(n)*eta_sq/(1-eta_sq)
 
     # Determine critical value
@@ -345,7 +345,7 @@ pow_t_anova = function(groups,
 
   return_list = list(power = pow)
   if(show_plot) return_list$plot = plt
-  if(effect_size) return_list$effect_size = ifelse(groups < 3, d, f2)
+  if(effect_size & groups < 3) return_list$d = d else if (effect_size) return_list$f2 = f2
 
   return(return_list)
 }
