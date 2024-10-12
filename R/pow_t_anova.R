@@ -59,8 +59,6 @@ pow_t_anova = function(groups,
     if (is.null(alternative)) alternative = "two.sided"
 
     # find critical values
-    print(alpha/2)
-    print(1-alpha/2)
     crit_vals = ifelse(c(alternative, alternative) == "two.sided",
                        qt(c(alpha/2, 1-(alpha/2)), df = n-1),
                        ifelse(alternative == 'less',
