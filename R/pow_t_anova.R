@@ -152,7 +152,7 @@ pow_t_anova = function(groups,
                         (means[1] - means[2]) / sqrt(((n[1]-1)*sds[1]^2+(n[2]-1)*sds[2]^2)/(sum(n)-2))))
 
       #NCP
-      ncp = d*sqrt(n)
+      ncp = d*sqrt(n/2)
 
       # Power
       pow = ifelse(alternative == "two.sided",
@@ -228,7 +228,7 @@ pow_t_anova = function(groups,
                         (means[1] - means[2]) / sqrt(((n[1]-1)*sds[1]^2+(n[2]-1)*sds[2]^2)/(sum(n)-2))))
 
       #NCP
-      ncp = d*sqrt(n)
+      ncp = d*sqrt(n/2)
 
       # Power
       pow = ifelse(alternative == "two.sided",
@@ -305,7 +305,6 @@ pow_t_anova = function(groups,
     if (length(n) == 1) SS_a = n*sum((means-mean(means))^2) else SS_a = sum(n*(means-mean(unlist(foreach::foreach(m = means, n = n) %do% {rep(m, n)})))^2)
     if(length(sds)==1) SS_e = sds^2*(n-1)*groups else SS_e = sum(sds^2*(n-1))
     eta_sq = SS_a/(SS_a+SS_e)
-
 
     # Cohen's f
     if(length(n)==1) ncp = groups * n * eta_sq/(1-eta_sq) else ncp = sum(n)*eta_sq/(1-eta_sq)
