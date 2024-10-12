@@ -345,7 +345,7 @@ pow_t_anova = function(groups,
 
   return_list = list(power = pow)
   if(show_plot) return_list$plot = plt
-  if(effect_size) return$effect_size = ifelse(groups < 3, d, f2)
+  if(effect_size) return_list$effect_size = ifelse(groups < 3, d, f2)
 
   return(return_list)
 }
