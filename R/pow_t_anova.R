@@ -217,7 +217,9 @@ pow_t_anova = function(groups,
                   (sds[1]^2/n[1] + sds[2]^2/n[2])^2 / ((sds[1]^2/n[1])^2/(n[1]-1) + (sds[2]^2/n[2])^2/(n[2]-1)),
                   ifelse(length(sds) == 2 & length(n) == 1,
                          (sds[1]^2/n + sds[2]^2/n)^2 / ((sds[1]^2/n)^2/(n-1) + (sds[2]^2/n)^2/(n-1)),
-                         (sds^2/n + sds^2/n)^2 / ((sds^2/n)^2/(n-1) + (sds^2/n)^2/(n-1))))
+                         ifelse(length(sds) == 1 & length(n) == 2,
+                                (sds^2/n[1] + sds^2/n[2])^2 / ((sds^2/n[1])^2/(n[1]-1) + (sds^2/n[2])^2/(n[2]-1)),
+                                n*2-2)))
 
       # find critical value(s)
       crit_vals = ifelse(c(alternative, alternative) == "two.sided",
