@@ -74,7 +74,7 @@ pow_t_anova = function(groups,
                       (means - mu)/sds))
 
     #NCP
-    ncp = d/sqrt(n)
+    ncp = d*sqrt(n)
 
     # Power
     pow = ifelse(alternative == "two.sided",
@@ -154,7 +154,7 @@ pow_t_anova = function(groups,
                         (means[1] - means[2]) / sqrt(((n[1]-1)*sds[1]^2+(n[2]-1)*sds[2]^2)/(sum(n)-2))))
 
       #NCP
-      ncp = d/sqrt(n)
+      ncp = d*sqrt(n)
 
       # Power
       pow = ifelse(alternative == "two.sided",
@@ -230,7 +230,7 @@ pow_t_anova = function(groups,
                         (means[1] - means[2]) / sqrt(((n[1]-1)*sds[1]^2+(n[2]-1)*sds[2]^2)/(sum(n)-2))))
 
       #NCP
-      ncp = d/sqrt(n)
+      ncp = d*sqrt(n)
 
       # Power
       pow = ifelse(alternative == "two.sided",
