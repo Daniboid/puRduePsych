@@ -11,7 +11,7 @@ sim_dat_lm(lm, n_forSim = NULL)
 \arguments{
 \item{lm}{Object of type `lm`. The object from which to generate a new data-set.}
 
-\item{n_foSim}{Integer Scalar. The number of observations to create in the new data. If `NULL` the same number of observations as in the original `lm` will be used.}
+\item{n_forSim}{Integer Scalar. The number of observations to create in the new data. If `NULL` the same number of observations as in the original `lm` will be used.}
 }
 \description{
 see title
