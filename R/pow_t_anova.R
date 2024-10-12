@@ -15,6 +15,7 @@
 #' @param paired Logical (Boolean). Should a two-sample t-test be conducted in a pairwise manner. Defaults to FALSE. Ignored if only 1 group or more than 2.
 #' @param anova_type Integer Scalar from 1 to 3. The type of Sums of Squared Deviations to be used for the one-way ANOVA. Ignored if less than 3 groups.
 #' @param show_plot Logical (Boolean). Should a plot be output as well? Defaults to `FALSE`
+#' @param effect_size Logical (Boolean). Should the standardized effect size (Cohen's *d* or *f2*) be returned? Defaults to `FALSE`
 #'
 #'
 #' @import utils
@@ -36,7 +37,8 @@ pow_t_anova = function(groups,
                        mu = NULL,
                        paired = F,
                        anova_type = NULL,
-                       show_plot = F) {
+                       show_plot = F,
+                       effect_size = F) {
 
   if(length(groups) > 1 | !all.equal(groups, as.integer(groups)) | groups <= 0) stop("'groups' must be a single positive integer.")
   if(length(n) != 1 & length(n) != groups) stop("'n' must be either a single positive integer or a vector of positive integers
@@ -312,6 +314,8 @@ pow_t_anova = function(groups,
     if (length(n) == 1) SS_a = n*sum((means-mean(means))^2) else SS_a = sum(n*(means-mean(unlist(foreach::foreach(m = means, n = n) %do% {rep(m, n)})))^2)
     if(length(sds)==1) SS_e = sds^2*(n-1)*groups else SS_e = sum(sds^2*(n-1))
     eta_sq = SS_a/(SS_a+SS_e)
+    f2 = eta_sq/(1-eta_sq)
+    print(f2)
 
     # Cohen's f
     if(length(n)==1) ncp = groups * n * eta_sq/(1-eta_sq) else ncp = sum(n)*eta_sq/(1-eta_sq)
@@ -339,5 +343,9 @@ pow_t_anova = function(groups,
       }
   }
 
-  if(show_plot) return(list(power = pow, plot = plt)) else return(power = pow)
+  return_list = list(power = pow)
+  if(show_plot) return_list$plot = plt
+  if(effect_size) return$effect_size = ifelse(groups < 3, d, f2)
+
+  return(return_list)
 }
