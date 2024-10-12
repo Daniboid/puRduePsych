@@ -302,13 +302,13 @@ pow_t_anova = function(groups,
     if(is.null(anova_type)) anova_type = 3
 
     # Calculate eta-squared
-    if (length(n) == 1) SS_a = n*sum((means-mean(means))^2) else SS_a = sum(n*(means-mean(unlist(foreach(m = means, n = n) %do% {rep(m, n)})))^2)
-    SS_e = sum(sds^2*(n-1))
-    eta_sq = SS_a/SS_e
+    if (length(n) == 1) SS_a = n*sum((means-mean(means))^2) else SS_a = sum(n*(means-mean(unlist(foreach::foreach(m = means, n = n) %do% {rep(m, n)})))^2)
+    if(length(sds)==1) SS_e = sds^2*(n-1)*groups else SS_e = sum(sds^2*(n-1))
+    eta_sq = SS_a/(SS_a+SS_e)
 
 
     # Cohen's f
-    ncp = sum(n)*eta_sq/(1-eta_sq)
+    if(length(n)==1) ncp = groups * n * eta_sq/(1-eta_sq) else ncp = sum(n)*eta_sq/(1-eta_sq)
 
     # Determine critical value
     crit_val = qf(1-alpha, df1, df2)
@@ -324,7 +324,7 @@ pow_t_anova = function(groups,
       plt = ggplot2::ggplot(plot_df, ggplot2::aes(x = `F`, y = Density, color = Distribution)) +
         ggplot2::geom_line(linewidth = 1.5) +
         ggplot2::geom_vline(ggplot2::aes(xintercept=crit_val), linewidth = 1.5, color = "red", linetype = 2) +
-        #ggpubr::theme_pubr() +
+        ggpubr::theme_pubr() +
         ggplot2::geom_ribbon(data = plot_df[plot_df$Distribution == "Alternative" &
                                               plot_df$`F` > crit_val,],
                              mapping = ggplot2::aes(ymin = 0, ymax = Density),
