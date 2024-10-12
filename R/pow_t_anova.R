@@ -138,9 +138,14 @@ pow_t_anova = function(groups,
 
 
     if (eq_var & !paired) {
+      df = ifelse(length(n) == 1,
+                  2*n-2,
+                  sum(n-2))
+
+
       # find critical value(s)
       crit_vals = ifelse(c(alternative, alternative) == "two.sided",
-                         qt(c(alpha/2, 1-(alpha/2)), df = n-2),
+                         qt(c(alpha/2, 1-(alpha/2)), df = df),
                          ifelse(alternative == 'less',
                                 qt(alpha, df = n-2),
                                 qt(1-alpha, df = n-2)))
@@ -156,16 +161,16 @@ pow_t_anova = function(groups,
 
       # Power
       pow = ifelse(alternative == "two.sided",
-                   pt(min(crit_vals), df = n-2, ncp = ncp) + pt(max(crit_vals), n-2, ncp = ncp, lower.tail = F),
+                   pt(min(crit_vals), df = df, ncp = ncp) + pt(max(crit_vals), n-2, ncp = ncp, lower.tail = F),
                    ifelse(alternative == "less",
-                          pt(crit_vals, df = n-2, ncp = ncp),
-                          pt(crit_vals, df = n-2, ncp = ncp, lower.tail = F)))
+                          pt(crit_vals, df = df, ncp = ncp),
+                          pt(crit_vals, df = df, ncp = ncp, lower.tail = F)))
 
       if (show_plot){
         t = seq(-4,+4,by=.1)
         plot_df = data.frame(t,
-                             Null = dt(t, df=n-2),
-                             Alternative = dt(t, df = n-2, ncp = ncp)) |>
+                             Null = dt(t, df=df),
+                             Alternative = dt(t, df = df, ncp = ncp)) |>
           tidyr::pivot_longer(2:3, names_to = "Distribution", values_to = "Density")
         plt = ggplot2::ggplot(plot_df, ggplot2::aes(x = t, y = Density, color = Distribution)) +
           ggplot2::geom_line(linewidth = 1.5) +

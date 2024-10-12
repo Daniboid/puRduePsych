@@ -42,5 +42,5 @@ pow_t_anova(
 \item{n_sims}{Positive Integer Scalar. The number of simulations to base the estimate on. Default is 10,000.}
 }
 \description{
-Calculates power for a given effect size, sample size, and alpha with the hypothetical means provided.
+Calculates power for a given means, sd, sample size(s), and alpha-level.
 }
