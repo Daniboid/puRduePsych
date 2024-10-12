@@ -14,6 +14,7 @@
 #' @param eq_var Logical (Boolean). Should a two-sample t-test assume equal variance (i.e., perform Student's *t*-test). Defaults to FALSE. Ignored if only 1 group or more than 2.
 #' @param paired Logical (Boolean). Should a two-sample t-test be conducted in a pairwise manner. Defaults to FALSE. Ignored if only 1 group or more than 2.
 #' @param anova_type Integer Scalar from 1 to 3. The type of Sums of Squared Deviations to be used for the one-way ANOVA. Ignored if less than 3 groups.
+#' @param show_plot Logical (Boolean). Should a plot be output as well? Defaults to `FALSE`
 #'
 #'
 #' @import utils
