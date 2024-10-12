@@ -295,19 +295,17 @@ pow_t_anova = function(groups,
 
     # calculate DF
     df1 = groups - 1
-    df2 = ifelse(n == 1,
+    df2 = ifelse(length(n) == 1,
                  (n-1) * groups,
                  sum(n) - groups)
-
     # set defaults
     if(is.null(anova_type)) anova_type = 3
 
     # Calculate eta-squared
-    SS_a = ifelse(length(n) == 1,
-                  n*sum((means-mean(means))^2),
-                  sum(n*(means-mean(unlist(foreach(m = means, n = n) %do% {rep(m, n)}))^2)))
+    if (length(n) == 1) SS_a = n*sum((means-mean(means))^2) else SS_a = sum(n*(means-mean(unlist(foreach(m = means, n = n) %do% {rep(m, n)})))^2)
     SS_e = sum(sds^2*(n-1))
     eta_sq = SS_a/SS_e
+
 
     # Cohen's f
     ncp = sum(n)*eta_sq/(1-eta_sq)
