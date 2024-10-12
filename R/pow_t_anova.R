@@ -1,7 +1,7 @@
 #' Calculate power for *t*-test or One-Way Anova
 #'
 #' @description
-#' Calculates power for a given effect size, sample size, and alpha with the hypothetical means provided.
+#' Calculates power for a given means, sd, sample size(s), and alpha-level.
 #'
 #' @param groups Positive Integer Scalar. The number of groups to perform the test with.
 #' @param n Positive Integer Scalar or Vector. The number of observations per group. If a scalar is provided, all groups will have that number of observations. If a vector is provided, the there must be a number of integers equal to `groups`; these will be the numbers of observations in a given group.
