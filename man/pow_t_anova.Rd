@@ -16,7 +16,8 @@ pow_t_anova(
   paired = F,
   anova_type = NULL,
   show_plot = F,
-  effect_size = F
+  effect_size = F,
+  omega = F
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ pow_t_anova(
 \item{show_plot}{Logical (Boolean). Should a plot be output as well? Defaults to `FALSE`}
 
 \item{effect_size}{Logical (Boolean). Should the standardized effect size (Cohen's *d* or *f2*) be returned? Defaults to `FALSE`}
+
+\item{omega}{Logical (Boolean). Should omega-squared be used to calculate power? Defaults to `FALSE`, indicating eta-squared will be used. Ignored if computing power for a t-test.}
 }
 \description{
 Calculates power for a given means, sd, sample size(s), and alpha-level.

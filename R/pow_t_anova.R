@@ -15,6 +15,7 @@
 #' @param anova_type Integer Scalar from 1 to 3. The type of Sums of Squared Deviations to be used for the one-way ANOVA. Ignored if less than 3 groups.
 #' @param show_plot Logical (Boolean). Should a plot be output as well? Defaults to `FALSE`
 #' @param effect_size Logical (Boolean). Should the standardized effect size (Cohen's *d* or *f2*) be returned? Defaults to `FALSE`
+#' @param omega Logical (Boolean). Should omega-squared be used to calculate power? Defaults to `FALSE`, indicating eta-squared will be used. Ignored if computing power for a t-test.
 #'
 #'
 #' @import utils
@@ -38,7 +39,8 @@ pow_t_anova = function(groups,
                        paired = F,
                        anova_type = NULL,
                        show_plot = F,
-                       effect_size = F) {
+                       effect_size = F,
+                       omega = F) {
 
   if(length(groups) > 1 | !all.equal(groups, as.integer(groups)) | groups <= 0) stop("'groups' must be a single positive integer.")
   if(length(n) != 1 & length(n) != groups) stop("'n' must be either a single positive integer or a vector of positive integers
@@ -48,6 +50,7 @@ pow_t_anova = function(groups,
                                                     a vector of values specifying the sd for each group")
   if(!all(sds > 0)) stop("All standard deviation values must be positive.")
   if(groups == 2 & paired & length(n) > 1 & !all(n==n[1]) ) stop("Paired samples *t*-tests need equal group sizes.")
+  if(groups < 3 & omega) rlang::warn("`omega` specified as true, but computing power for a t-test\nThis argument will be ignored...\n\n")
 
   requireNamespace("car")
 
@@ -310,15 +313,29 @@ pow_t_anova = function(groups,
 
     # Calculate eta-squared
     if (length(n) == 1) SS_a = n*sum((means-mean(means))^2) else SS_a = sum(n*(means-mean(unlist(foreach::foreach(m = means, n = n) %do% {rep(m, n)})))^2)
-    if(length(sds)==1) SS_e = sds^2*(n-1)*groups else SS_e = sum(sds^2*(n-1))
-    eta_sq = SS_a/(SS_a+SS_e)
+    if(length(sds)==1) SS_e = sds^2*(n-1)*groups else SS_e = sum
 
+    # Are we using omega or eta?
+    if(omega){
+      omega_squared = (SS_a-(df1*(SS_e/df2))) / (SS_a + SS_e + (SS_e/df2))
 
-    # Cohen's f
-    f2 = eta_sq/(1-eta_sq)
+      # Omega squared can be less than 0: if so, let the user know...
+      if(omega_squared < 0) {
+        rlang::warn("Omega-squared is less than 0. Using 0 instead...\n\n")
+        omega_squared = 0
+      }
+
+      # Cohen's f
+      f2 = omega_squared/(1-omega_squared)
+    } else {
+      eta_sq = SS_a/(SS_a+SS_e)
+
+      # Cohen's f
+      f2 = eta_sq/(1-eta_sq)
+    }
 
     # NCP
-    if(length(n)==1) ncp = groups * n * eta_sq/(1-eta_sq) else ncp = sum(n)*eta_sq/(1-eta_sq)
+    if(length(n)==1) ncp = groups * n * f2 else ncp = sum(n)*f2
 
     # Determine critical value
     crit_val = qf(1-alpha, df1, df2)
