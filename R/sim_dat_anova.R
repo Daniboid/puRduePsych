@@ -33,7 +33,7 @@ sim_dat_anova = function(aov_in,
       tmp_sd = stats::sd(aov_in$model[,iv])   # and standard deviation...
       df_sim[,iv] = stats::rnorm(n_forSim, tmp_mu, tmp_sd) # use those to generate a simulated sample...
     } else {
-      if (n_forSim == nrow(aov_in$model)) df_sim[,iv] = aov_in[,iv] else {
+      if (n_forSim == nrow(aov_in$model)) df_sim[,iv] = aov_in$model[,iv] else {
         tmp_ratio = table(aov_in$model[,iv])/sum(table(aov_in$model[,iv]))
         tmp_vect  = rep(names(tmp_ratio), round(tmp_ratio*n_forSim))
         if (length(tmp_vect) < nrow(df_sim)) tmp_vect = c(tmp_vect, rep(names(tmp_ratio[tmp_ratio == max(tmp_ratio)]),
