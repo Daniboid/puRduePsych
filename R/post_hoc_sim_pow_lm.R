@@ -30,7 +30,7 @@ post_hoc_sim_pow_lm = function (lm,
   ) %dopar% {
 
     fake = puRduePsych::sim_dat_lm(lm, n_forSim)    #generate a fake dataset
-    lm_tmp = base::suppressWarnings(suppressMessages(lm(lm$call$formula,
+    lm_tmp = base::suppressWarnings(suppressMessages(stats::lm(lm$call$formula,
                                                         data = fake)))
 
     coefs = base::data.frame(stats::summary.lm(lm_tmp)$coefficients)
