@@ -12,7 +12,7 @@
 #' @import parallel
 #' @import doSNOW
 #' @import foreach
-#' @export post_hoc_sim_pow_lm
+#' @export post_hoc_sim_pow_anova
 #'
 
 
