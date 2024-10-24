@@ -2,11 +2,13 @@
 
 export(determine_n_lm)
 export(determine_n_t_anova)
+export(eta_sq)
 export(fishers_z)
 export(hierarchical_reg)
 export(lm_mediation)
 export(lm_summarize)
 export(omega_sq)
+export(post_hoc_pow_anova)
 export(post_hoc_sim_pow_lm)
 export(pow_t_anova)
 export(sim_dat_lm)
