@@ -60,38 +60,6 @@ hierarchical_reg = function(y,
   if(is.null(steps_verbose)) steps_verbose = verbose
   if(is.null(simult_verbose)) simult_verbose = verbose
 
-
-  # For Simultaneous
-
-  if (simultaneous){
-    step_output = data.frame(
-      step      = c(),
-      R_sq_semi = c(),
-      F_semi    = c(),
-      df1_semi  = c(),
-      df2_semi  = c(),
-      sig       = c()
-    )
-    for(c in 1:length(chunks)){
-      if(simult_verbose) cat(paste0("Evaluating semipartial for the set: ",
-                                    names(chunks)[c]), "\n\n") # list(budy_chunk=unlist(unname(chunks[-c])), chunks[c]))
-      tmp_chunks = list(budy_chunk=unlist(unname(chunks[-c])), chunks[c])
-      tmp_highr  = hierarchical_reg(mod, tmp_chunks, warn=warn)$steps
-
-      step_output = rbind(step_output,
-                          data.frame(
-                            step      = names(chunks)[c],
-                            R_sq_semi = tmp_highr$R_sq_change[2],
-                            F_semi    = tmp_highr$change_F[2],
-                            df1_semi  = tmp_highr$change_df1[2],
-                            df2_semi  = tmp_highr$mod_df2[2],
-                            sig       = tmp_highr$change_sig[2]
-                          ))
-    }
-
-    coefs_output = coefs_output[length(coefs_output)]
-  }
-
   ## For stepwise
 
   if(stepwise){
@@ -186,6 +154,38 @@ hierarchical_reg = function(y,
     if(verbose) print(tmp_summ)
     coefs_output[[s]] = tmp_summ
     names(coefs_output)[s] = step
+  }
+
+
+  # For Simultaneous
+
+  if (simultaneous){
+    step_output = data.frame(
+      step      = c(),
+      R_sq_semi = c(),
+      F_semi    = c(),
+      df1_semi  = c(),
+      df2_semi  = c(),
+      sig       = c()
+    )
+    for(c in 1:length(chunks)){
+      if(simult_verbose) cat(paste0("Evaluating semipartial for the set: ",
+                                    names(chunks)[c]), "\n\n") # list(budy_chunk=unlist(unname(chunks[-c])), chunks[c]))
+      tmp_chunks = list(budy_chunk=unlist(unname(chunks[-c])), chunks[c])
+      tmp_highr  = hierarchical_reg(mod, tmp_chunks, warn=warn)$steps
+
+      step_output = rbind(step_output,
+                          data.frame(
+                            step      = names(chunks)[c],
+                            R_sq_semi = tmp_highr$R_sq_change[2],
+                            F_semi    = tmp_highr$change_F[2],
+                            df1_semi  = tmp_highr$change_df1[2],
+                            df2_semi  = tmp_highr$mod_df2[2],
+                            sig       = tmp_highr$change_sig[2]
+                          ))
+    }
+
+    coefs_output = coefs_output[length(coefs_output)]
   }
 
   if(nrow(step_output>=1)) rownames(step_output) = 1:nrow(step_output)
