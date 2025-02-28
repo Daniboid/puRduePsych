@@ -63,7 +63,7 @@ lm_summarize = function(lm,
     lm_coef$semi = NA_real_
 
     for(x in ivs) {
-      if (attr(lm$terms,"dataClasses")[[x]] == "factor" &
+      if ((attr(lm$terms,"dataClasses")[[x]] == "factor" | attr(lm$terms,"dataClasses")[[x]] == "ordered") &
           length(levels(lm$model[[x]])) > 2 &
           warn) rlang::warn(paste(x, " is either nominal or ordinal. The semipartial correlation for this variable will only be displayed in the *first row* of the output table.\n",
                                   "That is, the semipartial correlation is calculated for *all* levels of this variable simultaneously, not each individual dummy-code or ordinal effect..."))
@@ -81,7 +81,7 @@ lm_summarize = function(lm,
   if(partial & length(ivs) > 1) {
     lm_coef$partial = NA_real_
     for(x in ivs) {
-      if (typeof(lm$model[[x]]) == "factor" &
+      if ((attr(lm$terms,"dataClasses")[[x]] == "factor" | attr(lm$terms,"dataClasses")[[x]] == "ordered")&
           length(levels(lm$model[[x]])) > 2 &
           warn) rlang::warn(paste(x, " is either nominal or ordinal. The partial for this variable will only be displayed in the *first row* of the output table.\n",
                                   "That is, the partial correlation is calculated for *all* levels of this variable simultaneously, not each individual dummy-code or ordinal effect..."))
