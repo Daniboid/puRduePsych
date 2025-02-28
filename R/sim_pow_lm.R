@@ -18,7 +18,7 @@
 sim_dat_lm = function (lm,
                        n_forSim=NULL){
   warning("This function has not been fully tested...")
-  warning("This function assumes all numeric variables in the model are normally distributed, and the same ratio of observations of all factor (nominal and ordinal) variables.")
+  warning("This function assumes all numeric variables in the model are normally distributed, and the same ratio of observations of all factor (i.e. nominal and ordinal) variables.")
 
   if(is.null(n_forSim)) n_forSim = nrow(lm$model)
 

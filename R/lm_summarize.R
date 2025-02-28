@@ -34,8 +34,8 @@ lm_summarize = function(lm,
   requireNamespace("reghelper")
 
   if(!is.numeric(CL) | CL > 1 | CL <= 0) stop("Confidence Level (CL) needs to be a numeric value between 0 and 1.")
-  if((any(attr(lm$terms,"dataClasses")=="factor") | any(attr(lm$terms,"dataClasses")=="factor")) &
-     (std | semi | partial) & warn) message("HEADS-UP: Nominal and ordinal variables are converted to numeric variables before partial, and semipartial coefficients are calculated." )
+  # if((any(attr(lm$terms,"dataClasses")=="factor") | any(attr(lm$terms,"dataClasses")=="ordered")) &
+  #    (std | semi | partial) & warn) message("HEADS-UP: Nominal and ordinal variables are converted to numeric variables before partial, and semipartial coefficients are calculated." )
 
   dv = as.character(lm$terms)[2]
   x_term = as.character(lm$terms)[3]
@@ -63,7 +63,10 @@ lm_summarize = function(lm,
     lm_coef$semi = NA_real_
 
     for(x in ivs) {
-      # cat(paste(x, "\n"))
+      if (attr(lm$terms,"dataClasses")[[x]] == "factor" &
+          length(levels(lm$model[[x]])) > 2 &
+          warn) rlang::warn(paste(x, " is either nominal or ordinal. The semipartial correlation for this variable will only be displayed in the *first row* of the output table.\n",
+                                  "That is, the semipartial correlation is calculated for *all* levels of this variable simultaneously, not each individual dummy-code or ordinal effect..."))
       lm_coef$semi[startsWith(rownames(lm_coef), x)][1] =
         sqrt(summ_lm$r.squared -
                summary(stats::lm(eval(parse(text=paste(dv, "~", paste0(ivs[ivs != x], collapse = " + ")))),
@@ -78,6 +81,10 @@ lm_summarize = function(lm,
   if(partial & length(ivs) > 1) {
     lm_coef$partial = NA_real_
     for(x in ivs) {
+      if (typeof(lm$model[[x]]) == "factor" &
+          length(levels(lm$model[[x]])) > 2 &
+          warn) rlang::warn(paste(x, " is either nominal or ordinal. The partial for this variable will only be displayed in the *first row* of the output table.\n",
+                                  "That is, the partial correlation is calculated for *all* levels of this variable simultaneously, not each individual dummy-code or ordinal effect..."))
       lm_coef$partial[startsWith(rownames(lm_coef),x)][1] =
         sqrt((summ_lm$r.squared -
                 summary(stats::lm(stats::as.formula(sprintf(paste(dv, "~", paste0(ivs[ivs != x], collapse = " + ")))),
